@@ -11,6 +11,7 @@ import { CirclePlus, Delete } from "@element-plus/icons-vue";
 import { onMounted, reactive, ref } from "vue";
 import TransportationAddDialog from "./components/TransportationAddDialog.vue";
 import { ElMessage, ElMessageBox } from "element-plus";
+import type { ConsoleTransportationModeDataItem } from "@/api/manage/types/console";
 
 const loading = ref(false);
 
@@ -58,8 +59,8 @@ type SearchFrom = Record<(typeof searchConfig)[number]["prop"], string>;
 const searchFrom = reactive<Partial<SearchFrom>>({});
 
 const paginationRef = ref();
-const tableData = ref([]);
-const total = ref(0);
+const tableData = ref<ConsoleTransportationModeDataItem[]>([]);
+const total = ref<number>(0);
 async function getTableData(page: PagePar) {
   loading.value = true;
   try {
@@ -70,16 +71,16 @@ async function getTableData(page: PagePar) {
     loading.value = false;
     if (result.code === "000000") {
       tableData.value = result.data.list;
-      total.value = result.data.total;
+      total.value = Number(result.data.total);
     }
   } catch (err) {
     console.error(err);
     loading.value = false;
   }
 }
-const multipleSelection = ref<any[]>([])
+const multipleSelection = ref<any[]>([]);
 function handleSelectionChange(selectedRows: any[]) {
-  multipleSelection.value = selectedRows
+  multipleSelection.value = selectedRows;
 }
 function handleSearch() {
   paginationRef.value.changePage(1);
@@ -88,14 +89,13 @@ function handleReset() {
   paginationRef.value.changePage(1);
 }
 
-function handleEdit(row: any) {}
-function handleDelete(row: any) {
-  ElMessageBox.confirm("确定删除该运输方式吗？", "提示", {
+function handleDelete(ids: string[]) {
+  ElMessageBox.confirm("确定删除所选运输方式吗？", "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
   }).then(async () => {
-    const result = await consoleTransportationModeDelete({ ids: [row.id] });
+    const result = await consoleTransportationModeDelete({ ids: ids });
     if (result.code === "000000") {
       ElMessage.success("删除成功");
       paginationRef.value.refresh();
@@ -104,11 +104,15 @@ function handleDelete(row: any) {
 }
 
 // #region 运输方式添加、编辑弹窗
-const transportationAddDialog = ref<DialogConfigVue | null>(null);
-const transportationAddDialogData = ref({});
-function handleDataAdd() {
-  if (transportationAddDialog.value) {
-    transportationAddDialog.value.visible = true;
+const transportationAddDialogRef = ref<DialogConfigVue | null>(null);
+const transportationAddDialogData =
+  ref<ConsoleTransportationModeDataItem | null>(null);
+function handleOpenDialog(row?: ConsoleTransportationModeDataItem) {
+  if(row){
+    transportationAddDialogData.value = {...row};
+  }
+  if (transportationAddDialogRef.value) {
+    transportationAddDialogRef.value.visible = true;
   }
 }
 
@@ -127,19 +131,27 @@ onMounted(() => {
         @reset="handleReset"
       />
     </el-card>
-    <el-card v-loading="loading"  shadow="never">
+    <el-card v-loading="loading" shadow="never">
       <div class="toolbar-wrapper" style="margin-bottom: 10px">
         <div>
-          <el-button type="primary" :icon="CirclePlus" @click="handleDataAdd">
+          <el-button type="primary" :icon="CirclePlus" @click="handleOpenDialog()">
             运输方式
           </el-button>
-          <el-button type="danger" :icon="Delete" @click="handleDataAdd">
+          <el-button
+            type="danger"
+            :icon="Delete"
+            @click="handleDelete(multipleSelection.map((it) => it.id))"
+          >
             批量删除
           </el-button>
         </div>
       </div>
       <div class="table-wrapper">
-        <el-table :data="tableData" row-key="id"  @selection-change="handleSelectionChange">
+        <el-table
+          :data="tableData"
+          row-key="id"
+          @selection-change="handleSelectionChange"
+        >
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column prop="id" label="ID" />
           <el-table-column prop="carrierCode" label="运送者代码" />
@@ -184,14 +196,14 @@ onMounted(() => {
                 style="margin: 0"
                 type="primary"
                 text
-                @click="handleEdit(scoped.row)"
+                @click="handleOpenDialog(scoped.row)"
                 >编辑</el-button
               >
               <el-button
                 style="margin: 0"
                 type="danger"
                 text
-                @click="handleDelete(scoped.row)"
+                @click="handleDelete([scoped.row.id])"
                 >删除</el-button
               >
             </template>
@@ -207,13 +219,13 @@ onMounted(() => {
       </div>
     </el-card>
     <TransportationAddDialog
-      ref="transportationAddDialog"
-      :dialog-data="transportationAddDialogData"
+      ref="transportationAddDialogRef"
+      :dialog-data="transportationAddDialogData!"
       :enum2-data="enum2Data"
       :enum3-data="enum3Data"
       :enum4-data="enum4Data"
       :enum5-data="enum5Data"
-      @dialogConfirm="()=> paginationRef.refresh()"
+      @dialogConfirm="() => paginationRef.refresh()"
     />
   </div>
 </template>
