@@ -34,10 +34,26 @@ export function commoncodeSelectType(data: any) {
     data,
   })
 }
-/** 公共代码分页列表 */
+/** 承运商公共代码分页列表 */
 export function commoncodeSelectPageable(data: any) {
   return request<any>({
     url: '/console/common-code/carrier/select/pageable',
+    method: 'post',
+    data,
+  })
+}
+/** 承运商公共代码新增 */
+export function commoncodeNew(data: any) {
+  return request<any>({
+    url: '/console/common-code/carrier/new',
+    method: 'post',
+    data,
+  })
+}
+/** 承运商公共代码del */
+export function commoncodeDel(data: any) {
+  return request<any>({
+    url: '/console/common-code/carrier/delete',
     method: 'post',
     data,
   })
