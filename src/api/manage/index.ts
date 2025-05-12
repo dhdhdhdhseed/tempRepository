@@ -26,3 +26,11 @@ export function commoncodeSelectType(data: any) {
     data,
   })
 }
+/** 公共代码分页列表 */
+export function commoncodeSelectPageable(data: any) {
+  return request<any>({
+    url: '/console/common-code/carrier/select/pageable',
+    method: 'post',
+    data,
+  })
+}

@@ -96,6 +96,21 @@ export const constantRoutes: RouteRecordRaw[] = [
       },
     ],
   },
+  {
+    path: '/',
+    component: Layouts,
+    redirect: '/commoncode',
+    children: [
+      {
+        path: "commoncode",
+        component: () => import("@/views/template-manage/commoncode.vue"),
+        name: "commoncode",
+        meta: {
+          title: "公共代码管理",
+        }
+      },
+    ]
+  },
 ]
 
 /**
