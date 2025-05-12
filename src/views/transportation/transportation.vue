@@ -2,6 +2,7 @@
 import {
   consoleTransportationModeSelectPageable,
   consoleTransportationModeDelete,
+  consoleTmsServiceInfoList,
 } from "@/api/manage/index";
 import Pagination from "@/components/Pagination/Pagination.vue";
 import SearchBar from "@/components/SearchBar/index.vue";
@@ -11,7 +12,7 @@ import { CirclePlus, Delete } from "@element-plus/icons-vue";
 import { onMounted, reactive, ref } from "vue";
 import TransportationAddDialog from "./components/TransportationAddDialog.vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import type { ConsoleTransportationModeDataItem } from "@/api/manage/types/console";
+import type { ConsoleTransportationModeDataItem,ConsoleTmsServiceInfoListDataItem } from "@/api/manage/types/console";
 
 const loading = ref(false);
 
@@ -78,8 +79,23 @@ async function getTableData(page: PagePar) {
     loading.value = false;
   }
 }
-const multipleSelection = ref<any[]>([]);
-function handleSelectionChange(selectedRows: any[]) {
+const serviceMap = new Map();
+const serviceList = ref<ConsoleTmsServiceInfoListDataItem[]>([])
+function getAllService() {
+  consoleTmsServiceInfoList().then((res) => {
+    if (res.code === "000000") {
+      serviceList.value = res.data;
+      res.data.forEach((item: any) => {
+        serviceMap.set(item.code, item);
+      });
+    }
+  });
+}
+
+const multipleSelection = ref<ConsoleTransportationModeDataItem[]>([]);
+function handleSelectionChange(
+  selectedRows: ConsoleTransportationModeDataItem[]
+) {
   multipleSelection.value = selectedRows;
 }
 function handleSearch() {
@@ -108,8 +124,10 @@ const transportationAddDialogRef = ref<DialogConfigVue | null>(null);
 const transportationAddDialogData =
   ref<ConsoleTransportationModeDataItem | null>(null);
 function handleOpenDialog(row?: ConsoleTransportationModeDataItem) {
-  if(row){
-    transportationAddDialogData.value = {...row};
+  if (row) {
+    transportationAddDialogData.value = { ...row };
+  }else{
+    transportationAddDialogData.value = null
   }
   if (transportationAddDialogRef.value) {
     transportationAddDialogRef.value.visible = true;
@@ -118,6 +136,7 @@ function handleOpenDialog(row?: ConsoleTransportationModeDataItem) {
 
 onMounted(() => {
   paginationRef.value.changePage(1);
+  getAllService();
 });
 </script>
 
@@ -134,7 +153,11 @@ onMounted(() => {
     <el-card v-loading="loading" shadow="never">
       <div class="toolbar-wrapper" style="margin-bottom: 10px">
         <div>
-          <el-button type="primary" :icon="CirclePlus" @click="handleOpenDialog()">
+          <el-button
+            type="primary"
+            :icon="CirclePlus"
+            @click="handleOpenDialog()"
+          >
             运输方式
           </el-button>
           <el-button
@@ -181,7 +204,14 @@ onMounted(() => {
           </el-table-column>
           <el-table-column prop="minTransitDays" label="最小运天数" />
           <el-table-column prop="maxTransitDays" label="最大运天数" />
-          <el-table-column prop="serviceCode" label="服务代码" />
+          <el-table-column prop="serviceCode" label="运输服务">
+            <template #default="scoped">
+              {{
+                serviceMap.get(scoped.row.serviceCode)?.name ||
+                scoped.row.serviceCode
+              }}
+            </template>
+          </el-table-column>
           <el-table-column prop="serviceLevel" label="服务级别">
             <template #default="scoped">
               {{
@@ -225,6 +255,7 @@ onMounted(() => {
       :enum3-data="enum3Data"
       :enum4-data="enum4Data"
       :enum5-data="enum5Data"
+      :service-list="serviceList"
       @dialogConfirm="() => paginationRef.refresh()"
     />
   </div>

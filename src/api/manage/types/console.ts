@@ -43,7 +43,7 @@ export interface ConsoleTransportationModeSelectPageableData extends PageableRes
 }
 
 export interface ConsoleTransportationModeUpdatePar {
-    id:string;
+    id: string;
     serviceCode: string;
     awsTransportMode: string;
     serviceLevel: string;
@@ -51,4 +51,21 @@ export interface ConsoleTransportationModeUpdatePar {
     countryCode: string;
     minTransitDays: string;
     maxTransitDays: string;
+}
+export interface ConsoleTransportationModeNewPar {
+    serviceCode: string;
+    awsTransportMode: string;
+    serviceLevel: string;
+    lastLegDeliveryMode: string;
+    countryCode: string;
+    minTransitDays: string;
+    maxTransitDays: string;
+}
+export interface ConsoleTransportationModeDeletePar {
+    ids: string[]
+}
+
+export interface ConsoleTmsServiceInfoListDataItem {
+    code: string,
+    name: string
 }

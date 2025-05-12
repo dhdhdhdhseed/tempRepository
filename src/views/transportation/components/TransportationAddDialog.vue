@@ -5,7 +5,10 @@ import {
   consoleTransportationModeUpdate,
 } from "@/api/manage";
 import { ElMessage } from "element-plus";
-import type { ConsoleTransportationModeDataItem } from "@/api/manage/types/console";
+import type {
+  ConsoleTransportationModeDataItem,
+  ConsoleTmsServiceInfoListDataItem,
+} from "@/api/manage/types/console";
 const emits = defineEmits(["dialogConfirm"]);
 const props = defineProps({
   dialogData: {
@@ -26,6 +29,10 @@ const props = defineProps({
   },
   enum5Data: {
     type: Object,
+    required: true,
+  },
+  serviceList: {
+    type: Array as PropType<ConsoleTmsServiceInfoListDataItem[]>,
     required: true,
   },
 });
@@ -54,7 +61,7 @@ const ruleForm = reactive<FormData>({
   maxTransitDays: "",
 });
 const rules = {
-  serviceCode: { required: true, message: "请输入服务代码", trigger: "blur" },
+  serviceCode: { required: true, message: "请选择运输服务", trigger: "blur" },
   awsTransportMode: {
     required: true,
     message: "请选择头程运输方式",
@@ -80,7 +87,7 @@ const rules = {
 };
 
 function onEnter() {
-  if (props.dialogData.id) {
+  if (props.dialogData?.id) {
     const mergedObj: Record<string, any> = Object.keys(ruleForm).reduce(
       (acc, key) => {
         if (props.dialogData && key in props.dialogData) {
@@ -113,6 +120,16 @@ function handleSubmit() {
     }
   });
 }
+
+const showServiceList = ref<ConsoleTmsServiceInfoListDataItem[]>(props.serviceList)
+function filterService(query: string){
+    query = query.toLowerCase();
+    showServiceList.value = props.serviceList.filter(
+      (item: { code: string; name: string }) =>
+        item.code.toLowerCase().includes(query) ||
+        item.name.toLowerCase().includes(query)
+    );
+}
 function handleClose() {
   ruleFormRef.value.resetFields();
 }
@@ -129,11 +146,11 @@ defineExpose({
     width="800px"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
-    :show-close="false"
+    :show-close="true"
     :destroy-on-close="true"
     :append-to-body="true"
     @open="onEnter"
-    @closed="handleClose"
+    @close="handleClose"
   >
     <div class="FD-dialog-body">
       <el-form
@@ -143,16 +160,25 @@ defineExpose({
         :rules="rules"
         label-width="10em"
       >
-        <el-form-item prop="serviceCode" label="服务代码">
-          <el-input
+        <el-form-item prop="serviceCode" label="运输服务">
+          <el-select
             v-model="ruleForm.serviceCode"
-            placeholder="请输入模板名称"
-          />
+            filterable
+            :filter-method="filterService"
+            placeholder="输入服务代码或服务名称进行筛选"
+          >
+            <el-option
+              v-for="item in showServiceList"
+              :key="item.code"
+              :label="item.name"
+              :value="item.code"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item prop="serviceLevel" label="服务级别">
           <el-select
             v-model="ruleForm.serviceLevel"
-            placeholder="请输入模板名称"
+            placeholder="请选择服务级别"
           >
             <el-option
               v-for="option in enum3Data.enmuOptions"
@@ -165,7 +191,7 @@ defineExpose({
         <el-form-item prop="awsTransportMode" label="头程运输方式">
           <el-select
             v-model="ruleForm.awsTransportMode"
-            placeholder="请输入模板名称"
+            placeholder="请选择头程运输方式"
           >
             <el-option
               v-for="option in enum2Data.enmuOptions"
@@ -178,7 +204,7 @@ defineExpose({
         <el-form-item prop="lastLegDeliveryMode" label="尾程运输方式">
           <el-select
             v-model="ruleForm.lastLegDeliveryMode"
-            placeholder="请输入模板名称"
+            placeholder="请选择尾程运输方式"
           >
             <el-option
               v-for="option in enum4Data.enmuOptions"
@@ -188,11 +214,8 @@ defineExpose({
             />
           </el-select>
         </el-form-item>
-        <el-form-item prop="countryCode" label="所属国家">
-          <el-select
-            v-model="ruleForm.countryCode"
-            placeholder="请输入模板名称"
-          >
+        <el-form-item prop="countryCode" label="国家">
+          <el-select v-model="ruleForm.countryCode" placeholder="请选择国家">
             <el-option
               v-for="option in enum5Data.enmuOptions"
               :key="option.value"
@@ -204,13 +227,13 @@ defineExpose({
         <el-form-item prop="minTransitDays" label="最小运输天数">
           <el-input
             v-model="ruleForm.minTransitDays"
-            placeholder="请输入模板名称"
+            placeholder="请输入最小运输天数"
           />
         </el-form-item>
         <el-form-item prop="maxTransitDays" label="最大运输天数">
           <el-input
             v-model="ruleForm.maxTransitDays"
-            placeholder="请输入模板名称"
+            placeholder="请输入最大运输天数"
           />
         </el-form-item>
       </el-form>

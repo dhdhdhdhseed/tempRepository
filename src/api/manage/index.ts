@@ -2,7 +2,7 @@ import type * as Console from './types/console'
 import { request } from '@/utils/service'
 
 /** 运输方式增加接口 */
-export function consoleTransportationModeNew(data: any) {
+export function consoleTransportationModeNew(data: Console.ConsoleTransportationModeNewPar) {
   return request<ApiResponseData<string>>({
     url: '/console/transportation-mode/new',
     method: 'post',
@@ -27,11 +27,18 @@ export function consoleTransportationModeUpdate(data: Console.ConsoleTransportat
   })
 }
 /** 运输方式删除 */
-export function consoleTransportationModeDelete(data: any) {
+export function consoleTransportationModeDelete(data: Console.ConsoleTransportationModeDeletePar) {
   return request<ApiResponseData<string>>({
     url: '/console/transportation-mode/delete',
     method: 'post',
     data,
+  })
+}
+/** 服务方式查询 */
+export function consoleTmsServiceInfoList() {
+  return request<ApiResponseData<Console.ConsoleTmsServiceInfoListDataItem[]>>({
+    url: '/console/tms/service-info/list',
+    method: 'post',
   })
 }
 /** 公共代码 */
