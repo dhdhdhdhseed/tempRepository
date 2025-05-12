@@ -9,6 +9,7 @@ import {
 } from "@/api/manage";
 import Pagination from "@/components/Pagination/Pagination.vue";
 import { type Page } from "@/components/Pagination/types/pagination";
+import SearchBar from "@/components/SearchBar/index.vue";
 
 import { CirclePlus, Delete } from "@element-plus/icons-vue";
 import { cloneDeep } from "lodash-es";
@@ -39,7 +40,7 @@ const getTableData = (page: Page) => {
   loading.value = true;
   const params = {
     ...page,
-    codeType: 0,
+    ...searchFrom,
   };
   commoncodeSelectPageable(params)
     .then(({ data }: any) => {
@@ -111,6 +112,7 @@ async function getServiceList() {
 
 // #region 运费模板
 const FORM_DATA = reactive({
+  codeType: undefined,
   value: undefined,
   code: undefined,
 });
@@ -130,7 +132,7 @@ async function submitSave() {
     if (valid) {
       const params = {
         // "id": updateDialogConfig.data.id,
-        codeType: 0,
+        codeType: updateDialogConfig.data.codeType,
         value: updateDialogConfig.data.value,
         code: updateDialogConfig.data.code,
         // language: updateDialogConfig.data.language,
@@ -174,11 +176,40 @@ const resetTemplateForm = () => {
   updateFormRef.value?.resetFields();
 };
 
+const searchConfig = [
+  {
+    type: "input",
+    label: "类型",
+    prop: "codeType",
+    placeholder: "请输入",
+  },
+] as const;
+
+type SearchFrom = Record<(typeof searchConfig)[number]["prop"], string>;
+const searchFrom = reactive<Partial<SearchFrom>>({
+  codeType: 0,
+});
+
+function handleSearch() {
+  paginationRef.value.changePage(1);
+}
+function handleReset() {
+  paginationRef.value.changePage(1);
+}
+
 //#endregion
 </script>
 
 <template>
   <div class="app-container">
+    <el-card v-loading="loading" shadow="never" class="search-wrapper">
+      <SearchBar
+        v-model="searchFrom"
+        :search-config="searchConfig"
+        @search="handleSearch"
+        @reset="handleReset"
+      />
+    </el-card>
     <el-card v-loading="loading" shadow="never">
       <div class="toolbar-wrapper" style="margin-bottom: 10px">
         <div>
@@ -201,6 +232,7 @@ const resetTemplateForm = () => {
             </template>
           </el-table-column> -->
           <!-- <el-table-column prop="language" label="语言" align="center" /> -->
+          <el-table-column prop="codeType" label="类型" align="center" />
           <el-table-column prop="code" label="编码" align="center" />
           <el-table-column prop="value" label="对应值" align="center" />
           <!-- <el-table-column label="排序" align="center">
@@ -260,6 +292,13 @@ const resetTemplateForm = () => {
         :model="updateDialogConfig.data"
         label-width="6em"
       >
+        <el-form-item prop="codeType" label="类型">
+          <el-input
+            v-model="updateDialogConfig.data.codeType"
+            placeholder="请输入类型"
+            style="width: 80%"
+          ></el-input>
+        </el-form-item>
         <el-form-item prop="code" label="编码">
           <el-input
             v-model="updateDialogConfig.data.code"
