@@ -3,7 +3,7 @@ import type { LoginRequestData } from '@/api/login/types/login'
 import type { FormInstance, FormRules } from 'element-plus'
 import ThemeSwitch from '@/components/ThemeSwitch/index.vue'
 import { useUserStore } from '@/store/modules/user'
-import { Lock, User } from '@element-plus/icons-vue'
+import { Lock, Message } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -16,18 +16,16 @@ const loginFormRef = ref<FormInstance | null>(null)
 const loading = ref(false)
 /** 登录表单数据 */
 const loginFormData: LoginRequestData = reactive({
-  username: 'vicky@freedom-scm.com',
+  email: 'vicky@freedom-scm.com',
   password: '123456',
-  code: '',
 })
 /** 登录表单校验规则 */
 const loginFormRules: FormRules = {
-  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+  email: [{ required: true, message: '请输入邮箱', trigger: 'blur' }],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
     { min: 6, max: 16, message: '长度在 8 到 16 个字符', trigger: 'blur' },
   ],
-  code: [{ required: true, message: '请输入验证码', trigger: 'blur' }],
 }
 /** 登录逻辑  */
 function handleLogin() {
@@ -62,13 +60,13 @@ function handleLogin() {
       </div>
       <div class="content">
         <el-form ref="loginFormRef" :model="loginFormData" :rules="loginFormRules" @keyup.enter="handleLogin">
-          <el-form-item prop="username">
+          <el-form-item prop="email">
             <el-input
-              v-model.trim="loginFormData.username"
-              placeholder="用户名"
+              v-model.trim="loginFormData.email"
+              placeholder="邮箱"
               type="text"
               tabindex="1"
-              :prefix-icon="User"
+              :prefix-icon="Message"
               size="large"
             />
           </el-form-item>

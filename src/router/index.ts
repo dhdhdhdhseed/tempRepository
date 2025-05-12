@@ -2,8 +2,6 @@ import type { RouteRecordRaw } from 'vue-router'
 import routeSettings from '@/config/route'
 import { createRouter } from 'vue-router'
 import { flatMultiLevelRoutes, history } from './helper'
-import routes from './routes'
-
 const Layouts = () => import('@/layouts/index.vue')
 
 /**
@@ -46,7 +44,6 @@ export const constantRoutes: RouteRecordRaw[] = [
       hidden: true, // 是否在菜单栏上隐藏
     },
   },
-  // ...routes,
   {
     path: '/',
     component: Layouts,
@@ -119,98 +116,7 @@ export const constantRoutes: RouteRecordRaw[] = [
  * 必须带有 Name 属性
  */
 export const dynamicRoutes: RouteRecordRaw[] = [
-  {
-    path: '/permission',
-    component: Layouts,
-    redirect: '/permission/page',
-    name: 'Permission',
-    meta: {
-      title: '权限',
-      svgIcon: 'lock',
-      roles: ['admin', 'editor'], // 可以在根路由中设置角色
-      alwaysShow: true, // 将始终显示根菜单
-    },
-    children: [
-      {
-        path: 'page',
-        component: () => import('@/views/permission/page.vue'),
-        name: 'PagePermission',
-        meta: {
-          title: '页面级',
-          roles: ['admin'], // 或者在子导航中设置角色
-        },
-      },
-      {
-        path: 'directive',
-        component: () => import('@/views/permission/directive.vue'),
-        name: 'DirectivePermission',
-        meta: {
-          title: '按钮级', // 如果未设置角色，则表示：该页面不需要权限，但会继承根路由的角色
-        },
-      },
-    ],
-  },
-  {
-    path: '/',
-    component: Layouts,
-    redirect: '/dynamicRoutes',
-    meta: {
-      title: '动态路由',
-      svgIcon: 'menu',
-      roles: ['admin'],
-    },
-    children: [
-      {
-        path: 'errorPage',
-        component: Layouts,
-        meta: {
-          title: '错误页面',
-        },
-        children: [
-          {
-            path: '404',
-            component: () => import('@/views/error-page/404.vue'),
-            name: '404',
-            meta: {
-              title: '404页面',
-            },
-          },
-          {
-            path: '403',
-            component: () => import('@/views/error-page/403.vue'),
-            name: '403',
-            meta: {
-              title: '403页面',
-            },
-          },
-        ],
-      },
-      {
-        path: 'link',
-        meta: {
-          title: '外链',
-        },
-        children: [
-          {
-            path: 'https://juejin.cn/post/7089377403717287972',
-            component: () => { },
-            name: 'Link1',
-            meta: {
-              title: '中文文档',
-            },
-          },
-          {
-            path: 'https://juejin.cn/column/7207659644487139387',
-            component: () => { },
-            name: 'Link2',
-            meta: {
-              title: '新手教程',
-            },
-          },
-        ],
-      },
-    ],
-  },
+  
 ]
 
 const router = createRouter({

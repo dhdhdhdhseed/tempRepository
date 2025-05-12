@@ -1,6 +1,6 @@
 export interface LoginRequestData {
   /** admin 或 editor */
-  email: 'admin' | 'editor'
+  email: string
   /** 密码 */
   password: string
   /** 验证码 */
