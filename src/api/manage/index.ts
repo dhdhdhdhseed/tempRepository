@@ -18,3 +18,11 @@ export function consoleTransportationModeSelectPageable(data: any) {
     data,
   })
 }
+/** 公共代码 */
+export function commoncodeSelectType(data: any) {
+  return request<any>({
+    url: '/common-code/carrier/select/code-type',
+    method: 'post',
+    data,
+  })
+}

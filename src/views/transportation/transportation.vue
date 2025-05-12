@@ -2,9 +2,12 @@
 import { consoleTransportationModeSelectPageable } from '@/api/manage/index'
 import Pagination from '@/components/Pagination/Pagination.vue'
 import SearchBar from '@/components/SearchBar/index.vue'
+import { useFetchEnum } from '@/hooks/userFetchEnum'
 import { onMounted, reactive, ref } from 'vue'
 
 const loading = ref(false)
+
+const enum2Data = useFetchEnum({ codeType: '2' })
 
 // #region 搜索栏
 const searchConfig = [
@@ -35,7 +38,8 @@ async function getTableData(page: PagePar) {
     ...searchFrom,
   })
   if (result.code === '000000') {
-
+    tableData.value = result.data.list
+    total.value = result.data.total
   }
 }
 
