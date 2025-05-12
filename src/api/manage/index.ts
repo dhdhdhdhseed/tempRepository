@@ -9,3 +9,12 @@ export function consoleTransportationModeNew(data: any) {
     data,
   })
 }
+
+/** 运输方式分页查询 */
+export function consoleTransportationModeSelectPageable(data: any) {
+  return request<any>({
+    url: '/console/transportation-mode/select/pageable',
+    method: 'post',
+    data,
+  })
+}

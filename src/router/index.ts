@@ -80,6 +80,22 @@ export const constantRoutes: RouteRecordRaw[] = [
       },
     ],
   },
+  {
+    path: '/',
+    component: Layouts,
+    redirect: '/transportation',
+    children: [
+      {
+        path: 'transportation',
+        component: () => import('@/views/transportation/transportation.vue'),
+        name: 'transportation',
+        meta: {
+          title: '运输方式配置',
+          svgIcon: 'dashboard',
+        },
+      },
+    ],
+  },
 ]
 
 /**
