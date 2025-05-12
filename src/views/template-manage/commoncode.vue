@@ -1,8 +1,12 @@
 <script lang="ts" setup>
 import { onMounted, reactive, ref, nextTick } from "vue";
 import { type TableData } from "@/api/table/types/table";
-import { ElMessage } from "element-plus";
-import { commoncodeSelectPageable } from "@/api/manage";
+import { ElMessage, ElMessageBox } from "element-plus";
+import {
+  commoncodeSelectPageable,
+  commoncodeNew,
+  commoncodeDel,
+} from "@/api/manage";
 import Pagination from "@/components/Pagination/Pagination.vue";
 import { type Page } from "@/components/Pagination/types/pagination";
 
@@ -13,10 +17,10 @@ import { useFetchEnum } from "@/hooks/userFetchEnum";
 // const enum28Data = useFetchEnum({ id: '3', })
 // const enum6Data = useFetchEnum({ id: '6', })
 
-const agentTypeOptions = ref<any[]>([]);
-const enum28Data = useFetchEnum({ id: "3" }, () => {
-  agentTypeOptions.value = enum28Data.enmuOptions; //.filter((it) => it.value === 'A' || it.value === 'SA')
-});
+// const agentTypeOptions = ref<any[]>([]);
+// const enum28Data = useFetchEnum({ id: "3" }, () => {
+//   agentTypeOptions.value = enum28Data.enmuOptions; //.filter((it) => it.value === 'A' || it.value === 'SA')
+// });
 
 const paginationRef = ref();
 onMounted(() => {
@@ -35,11 +39,12 @@ const getTableData = (page: Page) => {
   loading.value = true;
   const params = {
     ...page,
+    codeType: 0,
   };
   commoncodeSelectPageable(params)
     .then(({ data }: any) => {
-      total.value = data.recordCount;
-      tableData.value = data.datas;
+      total.value = data.total * 1;
+      tableData.value = data.list;
     })
     .catch(() => {
       tableData.value = [];
@@ -125,20 +130,49 @@ async function submitSave() {
     if (valid) {
       const params = {
         // "id": updateDialogConfig.data.id,
-        codeType: updateDialogConfig.data.codeType,
+        codeType: 0,
+        value: updateDialogConfig.data.value,
         code: updateDialogConfig.data.code,
-        language: updateDialogConfig.data.language,
-        orderValue: updateDialogConfig.data.orderValue,
+        // language: updateDialogConfig.data.language,
+        // orderValue: updateDialogConfig.data.orderValue,
       };
-      const result = await commoncodeUpdate(params);
+      const result = await commoncodeNew(params);
       if (result.code === "000000") {
-        ElMessage.success("修改成功");
+        ElMessage.success("新增成功");
         updateDialogConfig.open = false;
         paginationRef.value.refresh();
       }
     }
   });
 }
+
+// 删除
+async function onDelete(obj: any) {
+  ElMessageBox.confirm(`确认删除？`, "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  }).then(async () => {
+    loading.value = true;
+    try {
+      const result = await commoncodeDel(obj);
+      loading.value = false;
+      if (result.code === "000000") {
+        ElMessage.success("删除成功");
+        paginationRef.value.refresh();
+      }
+    } catch (err) {
+      console.log(err);
+      loading.value = false;
+    }
+  });
+}
+
+// 重置弹窗数据
+const resetTemplateForm = () => {
+  updateDialogConfig.data = cloneDeep(FORM_DATA);
+  updateFormRef.value?.resetFields();
+};
 
 //#endregion
 </script>
@@ -152,7 +186,7 @@ async function submitSave() {
             type="primary"
             :icon="CirclePlus"
             @click="openUpdateFreightDialog()"
-            >新增模板</el-button
+            >新增承运商公共代码</el-button
           >
         </div>
       </div>
@@ -161,15 +195,15 @@ async function submitSave() {
           <el-table-column type="selection" width="50" align="center" />
           <!-- <el-table-column prop="id" label="ID" align="center" /> -->
           <!-- <el-table-column prop="code" label="类型" align="center" /> -->
-          <el-table-column prop="code" label="商户类型" align="center">
+          <!-- <el-table-column prop="code" label="商户类型" align="center">
             <template #default="scope">
               {{ enum28Data.enmuObject[scope.row.code]?.value }}
             </template>
-          </el-table-column>
-          <el-table-column prop="language" label="语言" align="center" />
-          <el-table-column prop="codeType" label="编码" align="center" />
+          </el-table-column> -->
+          <!-- <el-table-column prop="language" label="语言" align="center" /> -->
+          <el-table-column prop="code" label="编码" align="center" />
           <el-table-column prop="value" label="对应值" align="center" />
-          <el-table-column label="排序" align="center">
+          <!-- <el-table-column label="排序" align="center">
             <template #default="scope">
               <span>{{ scope.row.orderValue }}</span>
               <el-icon
@@ -180,9 +214,29 @@ async function submitSave() {
                 <Edit />
               </el-icon>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <!-- <el-table-column prop="createdTime" label="创建时间" align="center" />
           <el-table-column prop="updatedTime" label="更新时间" align="center" /> -->
+          <el-table-column label="操作" align="center">
+            <template #default="scope">
+              <div
+                style="
+                  display: flex;
+                  gap: 5px;
+                  flex-wrap: wrap;
+                  justify-content: center;
+                "
+              >
+                <el-button
+                  style="margin: 0"
+                  type="danger"
+                  text
+                  @click="onDelete(scope.row)"
+                  >删除</el-button
+                >
+              </div>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
       <div class="pager-wrapper">
@@ -197,6 +251,7 @@ async function submitSave() {
     <el-dialog
       v-model="updateDialogConfig.open"
       :title="updateDialogConfig.title"
+      @closed="resetTemplateForm"
       width="600px"
     >
       <el-form
@@ -205,18 +260,18 @@ async function submitSave() {
         :model="updateDialogConfig.data"
         label-width="6em"
       >
-        <el-form-item
-          prop="orderValue"
-          label="排序"
-          :rules="{
-            required: true,
-            message: '排序不能为空',
-            trigger: ['change'],
-          }"
-        >
+        <el-form-item prop="code" label="编码">
           <el-input
-            v-model="updateDialogConfig.data.orderValue"
-            placeholder="请输入"
+            v-model="updateDialogConfig.data.code"
+            placeholder="请输入编码"
+            style="width: 80%"
+          ></el-input>
+        </el-form-item>
+        <el-form-item prop="name" label="对应值">
+          <el-input
+            v-model="updateDialogConfig.data.value"
+            placeholder="请输入对应值"
+            style="width: 80%"
           ></el-input>
         </el-form-item>
       </el-form>

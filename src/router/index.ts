@@ -106,7 +106,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         component: () => import("@/views/template-manage/commoncode.vue"),
         name: "commoncode",
         meta: {
-          title: "公共代码管理",
+          title: "承运商公共代码管理",
         }
       },
     ]
