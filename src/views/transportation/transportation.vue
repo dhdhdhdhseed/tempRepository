@@ -1,102 +1,201 @@
 <script lang="ts" setup>
-import { consoleTransportationModeSelectPageable } from '@/api/manage/index'
-import Pagination from '@/components/Pagination/Pagination.vue'
-import SearchBar from '@/components/SearchBar/index.vue'
-import { useFetchEnum } from '@/hooks/userFetchEnum'
-import { onMounted, reactive, ref } from 'vue'
+import {
+  consoleTransportationModeSelectPageable,
+  consoleTransportationModeDelete,
+} from "@/api/manage/index";
+import Pagination from "@/components/Pagination/Pagination.vue";
+import SearchBar from "@/components/SearchBar/index.vue";
+import { useFetchEnum } from "@/hooks/userFetchEnum";
+import { loadSearchOptions } from "@/utils";
+import { CirclePlus, Delete } from "@element-plus/icons-vue";
+import { onMounted, reactive, ref } from "vue";
+import TransportationAddDialog from "./components/TransportationAddDialog.vue";
+import { ElMessage, ElMessageBox } from "element-plus";
 
-const loading = ref(false)
+const loading = ref(false);
 
-const enum2Data = useFetchEnum({ codeType: '2' })
-
-// #region 搜索栏
 const searchConfig = [
   {
-    type: 'input',
-    label: '订单 ID',
-    prop: 'id',
-    placeholder: '请输入',
+    type: "input",
+    label: "服务代码",
+    prop: "serviceCode",
+    placeholder: "请输入",
   },
   {
-    type: 'select',
-    label: '状态',
-    prop: 'status',
-    placeholder: '请选择',
+    type: "select",
+    label: "国家代码",
+    prop: "countryCode",
+    placeholder: "请选择",
     options: [],
   },
-] as const
+  {
+    type: "select",
+    label: "头程运输方式",
+    prop: "awsTransportMode",
+    placeholder: "请选择",
+    options: [],
+  },
+  {
+    type: "select",
+    label: "尾程运输方式",
+    prop: "lastLegDeliveryMode",
+    placeholder: "请选择",
+    options: [],
+  },
+] as const;
+const enum2Data = useFetchEnum({ codeType: "2" }, () =>
+  loadSearchOptions("awsTransportMode", enum2Data.enmuOptions, searchConfig)
+);
+const enum3Data = useFetchEnum({ codeType: "3" });
+const enum4Data = useFetchEnum({ codeType: "4" }, () =>
+  loadSearchOptions("lastLegDeliveryMode", enum4Data.enmuOptions, searchConfig)
+);
+const enum5Data = useFetchEnum({ codeType: "5" }, () =>
+  loadSearchOptions("countryCode", enum5Data.enmuOptions, searchConfig)
+);
 
-type SearchFrom = Record<(typeof searchConfig)[number]['prop'], string>
-const searchFrom = reactive<Partial<SearchFrom>>({})
+type SearchFrom = Record<(typeof searchConfig)[number]["prop"], string>;
+const searchFrom = reactive<Partial<SearchFrom>>({});
 
-const paginationRef = ref()
-const tableData = ref([])
-const total = ref(0)
+const paginationRef = ref();
+const tableData = ref([]);
+const total = ref(0);
 async function getTableData(page: PagePar) {
-  const result = await consoleTransportationModeSelectPageable({
-    ...page,
-    ...searchFrom,
-  })
-  if (result.code === '000000') {
-    tableData.value = result.data.list
-    total.value = result.data.total
+  loading.value = true;
+  try {
+    const result = await consoleTransportationModeSelectPageable({
+      ...page,
+      ...searchFrom,
+    });
+    loading.value = false;
+    if (result.code === "000000") {
+      tableData.value = result.data.list;
+      total.value = result.data.total;
+    }
+  } catch (err) {
+    console.error(err);
+    loading.value = false;
+  }
+}
+const multipleSelection = ref<any[]>([])
+function handleSelectionChange(selectedRows: any[]) {
+  multipleSelection.value = selectedRows
+}
+function handleSearch() {
+  paginationRef.value.changePage(1);
+}
+function handleReset() {
+  paginationRef.value.changePage(1);
+}
+
+function handleEdit(row: any) {}
+function handleDelete(row: any) {
+  ElMessageBox.confirm("确定删除该运输方式吗？", "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  }).then(async () => {
+    const result = await consoleTransportationModeDelete({ ids: [row.id] });
+    if (result.code === "000000") {
+      ElMessage.success("删除成功");
+      paginationRef.value.refresh();
+    }
+  });
+}
+
+// #region 运输方式添加、编辑弹窗
+const transportationAddDialog = ref<DialogConfigVue | null>(null);
+const transportationAddDialogData = ref({});
+function handleDataAdd() {
+  if (transportationAddDialog.value) {
+    transportationAddDialog.value.visible = true;
   }
 }
 
 onMounted(() => {
-  paginationRef.value.changePage(1)
-})
+  paginationRef.value.changePage(1);
+});
 </script>
 
 <template>
   <div class="app-container">
     <el-card v-loading="loading" shadow="never" class="search-wrapper">
-      <SearchBar v-model="searchFrom" :search-config="searchConfig" />
+      <SearchBar
+        v-model="searchFrom"
+        :search-config="searchConfig"
+        @search="handleSearch"
+        @reset="handleReset"
+      />
     </el-card>
-    <el-card v-loading="loading" shadow="never">
+    <el-card v-loading="loading"  shadow="never">
+      <div class="toolbar-wrapper" style="margin-bottom: 10px">
+        <div>
+          <el-button type="primary" :icon="CirclePlus" @click="handleDataAdd">
+            运输方式
+          </el-button>
+          <el-button type="danger" :icon="Delete" @click="handleDataAdd">
+            批量删除
+          </el-button>
+        </div>
+      </div>
       <div class="table-wrapper">
-        <el-table :data="tableData">
+        <el-table :data="tableData" row-key="id"  @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column
-            prop="id"
-            label="订单 ID"
-            align="center"
-            width="150"
-          />
-          <el-table-column
-            prop="merchantId"
-            label="分销商 ID"
-            align="center"
-            width="170"
-          />
-          <el-table-column
-            prop="supplierMerchantId"
-            label="供应商 ID"
-            align="center"
-            width="170"
-          />
-          <el-table-column
-            prop="totalPrice"
-            label="总价"
-            align="center"
-            width="150"
-          >
-            <template #default="scope">
-              ${{ scope.row.totalPrice.toFixed(2) }}
+          <el-table-column prop="id" label="ID" />
+          <el-table-column prop="carrierCode" label="运送者代码" />
+          <el-table-column prop="countryCode" label="国家代码">
+            <template #default="scoped">
+              {{
+                enum5Data.enmuObject[scoped.row.countryCode]?.value ||
+                scoped.row.countryCode
+              }}
             </template>
           </el-table-column>
-          <el-table-column
-            prop="currency"
-            label="币种"
-            align="center"
-            width="150"
-          />
-          <el-table-column
-            prop="createdTime"
-            label="创建时间"
-            align="center"
-            width="170"
-          />
+          <el-table-column prop="awsTransportMode" label="头程运输方式">
+            <template #default="scoped">
+              {{
+                enum2Data.enmuObject[scoped.row.awsTransportMode]?.value ||
+                scoped.row.awsTransportMode
+              }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="lastLegDeliveryMode" label="尾程运输方式">
+            <template #default="scoped">
+              {{
+                enum4Data.enmuObject[scoped.row.lastLegDeliveryMode]?.value ||
+                scoped.row.lastLegDeliveryMode
+              }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="minTransitDays" label="最小运天数" />
+          <el-table-column prop="maxTransitDays" label="最大运天数" />
+          <el-table-column prop="serviceCode" label="服务代码" />
+          <el-table-column prop="serviceLevel" label="服务级别">
+            <template #default="scoped">
+              {{
+                enum3Data.enmuObject[scoped.row.serviceLevel.toUpperCase()]
+                  ?.value || scoped.row.serviceLevel
+              }}
+            </template>
+          </el-table-column>
+          <el-table-column label="操作">
+            <template #default="scoped">
+              <el-button
+                style="margin: 0"
+                type="primary"
+                text
+                @click="handleEdit(scoped.row)"
+                >编辑</el-button
+              >
+              <el-button
+                style="margin: 0"
+                type="danger"
+                text
+                @click="handleDelete(scoped.row)"
+                >删除</el-button
+              >
+            </template>
+          </el-table-column>
         </el-table>
       </div>
       <div class="pager-wrapper">
@@ -107,6 +206,15 @@ onMounted(() => {
         />
       </div>
     </el-card>
+    <TransportationAddDialog
+      ref="transportationAddDialog"
+      :dialog-data="transportationAddDialogData"
+      :enum2-data="enum2Data"
+      :enum3-data="enum3Data"
+      :enum4-data="enum4Data"
+      :enum5-data="enum5Data"
+      @dialogConfirm="()=> paginationRef.refresh()"
+    />
   </div>
 </template>
 
