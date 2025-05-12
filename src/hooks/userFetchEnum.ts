@@ -21,13 +21,13 @@ type ApiData = ApiResponseData<EnmuData[]>
 
 /** 入参格式 */
 interface FetchEnumProps {
-  id: string
+  codeType: string
   api?: any
 }
 export function useFetchEnum(props: FetchEnumProps, callback?: any) {
-  const { codeType, api } = props
+  const { api, ...other } = props
   const params = {
-    codeType,
+    ...other,
   }
   const enumData = reactive({
     data: <EnmuData[]>[],

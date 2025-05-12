@@ -18,10 +18,18 @@ export function consoleTransportationModeSelectPageable(data: any) {
     data,
   })
 }
+/** 运输方式删除 */
+export function consoleTransportationModeDelete(data: any) {
+  return request<any>({
+    url: '/console/transportation-mode/delete',
+    method: 'post',
+    data,
+  })
+}
 /** 公共代码 */
 export function commoncodeSelectType(data: any) {
   return request<any>({
-    url: '/common-code/carrier/select/code-type',
+    url: '/console/common-code/global/select/code-type',
     method: 'post',
     data,
   })
