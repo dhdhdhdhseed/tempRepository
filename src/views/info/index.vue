@@ -182,6 +182,7 @@ const isEditMode = ref(false);
 // 展开的折叠面板
 const activeCollapse = ref(["aws", "tms", "callback"]);
 
+const tempData = ref({});
 // 配置信息数据
 const configInfo = reactive({
   shipmentIdVerifyRegex: "^[A-Za-z0-9]{10,20}$",
@@ -251,7 +252,8 @@ const rules = reactive({
 const toggleEditMode = () => {
   if (isEditMode.value) {
     // 取消编辑，恢复原始数据
-    resetForm();
+    // resetForm();
+    setData(tempData.value);
   }
   isEditMode.value = !isEditMode.value;
 };
@@ -310,19 +312,22 @@ function getCarrierDetail() {
   carrierDetail().then((res) => {
     if (res.code === "000000") {
       // Object.assign(configInfo, res.data);
-      configInfo.shipmentIdVerifyRegex = res.data.shipmentIdVerifyRegex;
-      configInfo.awsAccessKey = res.data.awsAccessKey;
-      configInfo.awsSecretKey = res.data.awsSecretKey;
-      configInfo.awsRoleArn = res.data.awsRoleArn;
-      configInfo.tmsRequestCertificate1 = res.data.tmsRequestCertificate1;
-      configInfo.tmsRequestCertificate2 = res.data.tmsRequestCertificate2;
-      configInfo.tmsShipmentSelectUrl = res.data.tmsShipmentSelectUrl;
-      configInfo.tmsShipmentTraceUrl = res.data.tmsShipmentTraceUrl;
-      configInfo.tmsServiceInfoSelectUrl = res.data.tmsServiceInfoSelectUrl;
-      configInfo.nextslsCallbackCertificate =
-        res.data.nextslsCallbackCertificate;
+      tempData.value = res.data;
+      setData(res.data);
     }
   });
+}
+function setData(data) {
+  configInfo.shipmentIdVerifyRegex = data.shipmentIdVerifyRegex;
+  configInfo.awsAccessKey = data.awsAccessKey;
+  configInfo.awsSecretKey = data.awsSecretKey;
+  configInfo.awsRoleArn = data.awsRoleArn;
+  configInfo.tmsRequestCertificate1 = data.tmsRequestCertificate1;
+  configInfo.tmsRequestCertificate2 = data.tmsRequestCertificate2;
+  configInfo.tmsShipmentSelectUrl = data.tmsShipmentSelectUrl;
+  configInfo.tmsShipmentTraceUrl = data.tmsShipmentTraceUrl;
+  configInfo.tmsServiceInfoSelectUrl = data.tmsServiceInfoSelectUrl;
+  configInfo.nextslsCallbackCertificate = data.nextslsCallbackCertificate;
 }
 
 // 组件挂载时获取配置数据
