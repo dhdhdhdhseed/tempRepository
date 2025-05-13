@@ -35,7 +35,7 @@ function handleLogin() {
       useUserStore()
         .login(loginFormData)
         .then(() => {
-          router.push({ path: '/' })
+          router.push({ path: '/dashboard' })
         })
         .catch(() => {
           loginFormData.password = ''

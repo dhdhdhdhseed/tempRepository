@@ -48,7 +48,7 @@ export const constantRoutes: RouteRecordRaw[] = [
   {
     path: '/',
     component: Layouts,
-    redirect: '/dashboard',
+    redirect: '/login',
     children: [
       {
         path: 'dashboard',
@@ -62,26 +62,25 @@ export const constantRoutes: RouteRecordRaw[] = [
       },
     ],
   },
+  // {
+  //   path: '/',
+  //   component: Layouts,
+  //   redirect: '/test',
+  //   children: [
+  //     {
+  //       path: 'test',
+  //       component: () => import('@/views/test/index.vue'),
+  //       name: 'Test',
+  //       meta: {
+  //         title: '测试页面',
+  //         svgIcon: 'dashboard',
+  //       },
+  //     },
+  //   ],
+  // },
   {
     path: '/',
     component: Layouts,
-    redirect: '/test',
-    children: [
-      {
-        path: 'test',
-        component: () => import('@/views/test/index.vue'),
-        name: 'Test',
-        meta: {
-          title: '测试页面',
-          svgIcon: 'dashboard',
-        },
-      },
-    ],
-  },
-  {
-    path: '/',
-    component: Layouts,
-    redirect: '/info',
     children: [
       {
         path: 'info',
@@ -97,7 +96,6 @@ export const constantRoutes: RouteRecordRaw[] = [
   {
     path: '/',
     component: Layouts,
-    redirect: '/transportation',
     children: [
       {
         path: 'transportation',
@@ -113,7 +111,6 @@ export const constantRoutes: RouteRecordRaw[] = [
   {
     path: '/',
     component: Layouts,
-    redirect: '/shipment-order',
     children: [
       {
         path: 'shipment-order',
@@ -129,7 +126,6 @@ export const constantRoutes: RouteRecordRaw[] = [
   {
     path: '/',
     component: Layouts,
-    redirect: '/commoncode',
     children: [
       {
         path: 'commoncode',

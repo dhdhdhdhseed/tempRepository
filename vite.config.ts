@@ -10,12 +10,12 @@ import svgLoader from 'vite-svg-loader'
 export default defineConfig({
   plugins: [vue(),
   /** 将 SVG 静态图转化为 Vue 组件 */
-  svgLoader({ defaultImport: 'url' }),
-  /** SVG */
-  createSvgIconsPlugin({
-    iconDirs: [path.resolve(process.cwd(), 'src/icons/svg')],
-    symbolId: 'icon-[dir]-[name]',
-  })],
+    svgLoader({ defaultImport: 'url' }),
+    /** SVG */
+    createSvgIconsPlugin({
+      iconDirs: [path.resolve(process.cwd(), 'src/icons/svg')],
+      symbolId: 'icon-[dir]-[name]',
+    })],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -28,13 +28,13 @@ export default defineConfig({
     cors: true,
     /** 接口代理 */
     proxy: {
-      "/api": {
-        target: "https://test-shiptrack.freedomscm.com",
+      '/api': {
+        target: 'https://test-shiptrack.freedomscm.com',
         ws: true,
         /** 是否允许跨域 */
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
-      }
+        rewrite: path => path.replace(/^\/api/, ''),
+      },
     },
   },
 })
