@@ -12,7 +12,10 @@ import { CirclePlus, Delete } from "@element-plus/icons-vue";
 import { onMounted, reactive, ref } from "vue";
 import TransportationAddDialog from "./components/TransportationAddDialog.vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import type { ConsoleTransportationModeDataItem,ConsoleTmsServiceInfoListDataItem } from "@/api/manage/types/console";
+import type {
+  ConsoleTransportationModeDataItem,
+  ConsoleTmsServiceInfoListDataItem,
+} from "@/api/manage/types/console";
 
 const loading = ref(false);
 
@@ -80,7 +83,7 @@ async function getTableData(page: PagePar) {
   }
 }
 const serviceMap = new Map();
-const serviceList = ref<ConsoleTmsServiceInfoListDataItem[]>([])
+const serviceList = ref<ConsoleTmsServiceInfoListDataItem[]>([]);
 function getAllService() {
   consoleTmsServiceInfoList().then((res) => {
     if (res.code === "000000") {
@@ -126,8 +129,8 @@ const transportationAddDialogData =
 function handleOpenDialog(row?: ConsoleTransportationModeDataItem) {
   if (row) {
     transportationAddDialogData.value = { ...row };
-  }else{
-    transportationAddDialogData.value = null
+  } else {
+    transportationAddDialogData.value = null;
   }
   if (transportationAddDialogRef.value) {
     transportationAddDialogRef.value.visible = true;
