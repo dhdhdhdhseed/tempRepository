@@ -4,7 +4,7 @@
  * @LastEditors: LYG liaoyanguo
  * @LastEditTime: 2025-05-13 15:13:57
  * @Email: liaoyanguo@foxmail.com
- * @Description: 
+ * @Description:
  * @FilePath: /tempRepository/src/api/manage/index.ts
  */
 import type * as Console from './types/console'
@@ -93,6 +93,15 @@ export function carrierDetail(data: any) {
 export function carrierUpdate(data: any) {
   return request<any>({
     url: '/console/carrier/update/carrier-code',
+    method: 'post',
+    data,
+  })
+}
+
+// 运输订单
+export function consoleShipmentOrderSelectPageable(data: Console.ConsoleShipmentOrderSelectPageablePar) {
+  return request<ApiResponseData<Console.ConsoleShipmentOrderSelectPageableData>>({
+    url: '/console/shipment-order/select/pageable',
     method: 'post',
     data,
   })

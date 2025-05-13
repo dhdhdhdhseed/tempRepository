@@ -89,7 +89,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         name: 'info',
         meta: {
           title: '承运商信息',
-          elIcon: 'SetUp',
+          elIcon: 'Edit',
         },
       },
     ],
@@ -118,10 +118,10 @@ export const constantRoutes: RouteRecordRaw[] = [
       {
         path: 'shipment-order',
         component: () => import('@/views/shipment-order/shipment-order.vue'),
-        name: 'transportation',
+        name: 'shipment-order',
         meta: {
-          title: '运单',
-          elIcon: 'SetUp',
+          title: '运单列表',
+          elIcon: 'Tickets',
         },
       },
     ],

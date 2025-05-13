@@ -1,146 +1,149 @@
 <script lang="ts" setup>
-import {
-  consoleTransportationModeSelectPageable,
-  consoleTransportationModeDelete,
-  consoleTmsServiceInfoList,
-} from "@/api/manage/index";
-import Pagination from "@/components/Pagination/Pagination.vue";
-import SearchBar from "@/components/SearchBar/index.vue";
-import { useFetchEnum } from "@/hooks/userFetchEnum";
-import { loadSearchOptions } from "@/utils";
-import { CirclePlus, Delete } from "@element-plus/icons-vue";
-import { onMounted, reactive, ref } from "vue";
-import TransportationAddDialog from "./components/TransportationAddDialog.vue";
-import { ElMessage, ElMessageBox } from "element-plus";
 import type {
-  ConsoleTransportationModeDataItem,
   ConsoleTmsServiceInfoListDataItem,
-} from "@/api/manage/types/console";
+  ConsoleTransportationModeDataItem,
+} from '@/api/manage/types/console'
+import {
+  consoleTmsServiceInfoList,
+  consoleTransportationModeDelete,
+  consoleTransportationModeSelectPageable,
+} from '@/api/manage/index'
+import Pagination from '@/components/Pagination/Pagination.vue'
+import SearchBar from '@/components/SearchBar/index.vue'
+import { useFetchEnum } from '@/hooks/userFetchEnum'
+import { loadSearchOptions } from '@/utils'
+import { CirclePlus, Delete } from '@element-plus/icons-vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { onMounted, reactive, ref } from 'vue'
+import TransportationAddDialog from './components/TransportationAddDialog.vue'
 
-const loading = ref(false);
+const loading = ref(false)
 
 const searchConfig = [
   {
-    type: "input",
-    label: "服务代码",
-    prop: "serviceCode",
-    placeholder: "请输入",
+    type: 'input',
+    label: '服务代码',
+    prop: 'serviceCode',
+    placeholder: '请输入',
   },
   {
-    type: "select",
-    label: "国家代码",
-    prop: "countryCode",
-    placeholder: "请选择",
+    type: 'select',
+    label: '国家代码',
+    prop: 'countryCode',
+    placeholder: '请选择',
     options: [],
   },
   {
-    type: "select",
-    label: "头程运输方式",
-    prop: "awsTransportMode",
-    placeholder: "请选择",
+    type: 'select',
+    label: '头程运输方式',
+    prop: 'awsTransportMode',
+    placeholder: '请选择',
     options: [],
   },
   {
-    type: "select",
-    label: "尾程运输方式",
-    prop: "lastLegDeliveryMode",
-    placeholder: "请选择",
+    type: 'select',
+    label: '尾程运输方式',
+    prop: 'lastLegDeliveryMode',
+    placeholder: '请选择',
     options: [],
   },
-] as const;
-const enum2Data = useFetchEnum({ codeType: "2" }, () =>
-  loadSearchOptions("awsTransportMode", enum2Data.enmuOptions, searchConfig)
-);
-const enum3Data = useFetchEnum({ codeType: "3" });
-const enum4Data = useFetchEnum({ codeType: "4" }, () =>
-  loadSearchOptions("lastLegDeliveryMode", enum4Data.enmuOptions, searchConfig)
-);
-const enum5Data = useFetchEnum({ codeType: "5" }, () =>
-  loadSearchOptions("countryCode", enum5Data.enmuOptions, searchConfig)
-);
+] as const
+const enum2Data = useFetchEnum({ codeType: '2' }, () =>
+  loadSearchOptions('awsTransportMode', enum2Data.enmuOptions, searchConfig))
+const enum3Data = useFetchEnum({ codeType: '3' })
+const enum4Data = useFetchEnum({ codeType: '4' }, () =>
+  loadSearchOptions('lastLegDeliveryMode', enum4Data.enmuOptions, searchConfig))
+const enum5Data = useFetchEnum({ codeType: '5' }, () =>
+  loadSearchOptions('countryCode', enum5Data.enmuOptions, searchConfig))
 
-type SearchFrom = Record<(typeof searchConfig)[number]["prop"], string>;
-const searchFrom = reactive<Partial<SearchFrom>>({});
+type SearchFrom = Record<(typeof searchConfig)[number]['prop'], string>
+const searchFrom = reactive<Partial<SearchFrom>>({})
 
-const paginationRef = ref();
-const tableData = ref<ConsoleTransportationModeDataItem[]>([]);
-const total = ref<number>(0);
+const paginationRef = ref()
+const tableData = ref<ConsoleTransportationModeDataItem[]>([])
+const total = ref<number>(0)
 async function getTableData(page: PagePar) {
-  loading.value = true;
+  loading.value = true
   try {
     const result = await consoleTransportationModeSelectPageable({
       ...page,
       ...searchFrom,
-    });
-    loading.value = false;
-    if (result.code === "000000") {
-      tableData.value = result.data.list;
-      total.value = Number(result.data.total);
+    })
+    loading.value = false
+    if (result.code === '000000') {
+      tableData.value = result.data.list
+      total.value = Number(result.data.total)
     }
-  } catch (err) {
-    console.error(err);
-    loading.value = false;
+  }
+  catch (err) {
+    console.error(err)
+    loading.value = false
   }
 }
-const serviceMap = new Map();
-const serviceList = ref<ConsoleTmsServiceInfoListDataItem[]>([]);
+const serviceMap = new Map()
+const serviceList = ref<ConsoleTmsServiceInfoListDataItem[]>([])
 function getAllService() {
   consoleTmsServiceInfoList().then((res) => {
-    if (res.code === "000000") {
-      serviceList.value = res.data;
+    if (res.code === '000000') {
+      serviceList.value = res.data
       res.data.forEach((item: any) => {
-        serviceMap.set(item.code, item);
-      });
+        serviceMap.set(item.code, item)
+      })
     }
-  });
+  })
 }
 
-const multipleSelection = ref<ConsoleTransportationModeDataItem[]>([]);
+const multipleSelection = ref<ConsoleTransportationModeDataItem[]>([])
 function handleSelectionChange(
-  selectedRows: ConsoleTransportationModeDataItem[]
+  selectedRows: ConsoleTransportationModeDataItem[],
 ) {
-  multipleSelection.value = selectedRows;
+  multipleSelection.value = selectedRows
 }
 function handleSearch() {
-  paginationRef.value.changePage(1);
+  paginationRef.value.changePage(1)
 }
 function handleReset() {
-  paginationRef.value.changePage(1);
+  paginationRef.value.changePage(1)
 }
 
 function handleDelete(ids: string[]) {
-  ElMessageBox.confirm("确定删除所选运输方式吗？", "提示", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    type: "warning",
+  if (!ids || ids.length === 0) {
+    ElMessage.warning('请选择要删除的运输方式')
+    return
+  }
+  ElMessageBox.confirm('确定删除所选运输方式吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
   }).then(async () => {
-    const result = await consoleTransportationModeDelete({ ids: ids });
-    if (result.code === "000000") {
-      ElMessage.success("删除成功");
-      paginationRef.value.refresh();
+    const result = await consoleTransportationModeDelete({ ids })
+    if (result.code === '000000') {
+      ElMessage.success('删除成功')
+      paginationRef.value.refresh()
     }
-  });
+  })
 }
 
 // #region 运输方式添加、编辑弹窗
-const transportationAddDialogRef = ref<DialogConfigVue | null>(null);
-const transportationAddDialogData =
-  ref<ConsoleTransportationModeDataItem | null>(null);
+const transportationAddDialogRef = ref<DialogConfigVue | null>(null)
+const transportationAddDialogData
+  = ref<ConsoleTransportationModeDataItem | null>(null)
 function handleOpenDialog(row?: ConsoleTransportationModeDataItem) {
   if (row) {
-    transportationAddDialogData.value = { ...row };
-  } else {
-    transportationAddDialogData.value = null;
+    transportationAddDialogData.value = { ...row }
+  }
+  else {
+    transportationAddDialogData.value = null
   }
   if (transportationAddDialogRef.value) {
-    transportationAddDialogRef.value.visible = true;
+    transportationAddDialogRef.value.visible = true
   }
 }
 
 onMounted(() => {
-  paginationRef.value.changePage(1);
-  getAllService();
-});
+  paginationRef.value.changePage(1)
+  getAllService()
+})
 </script>
 
 <template>
@@ -161,7 +164,7 @@ onMounted(() => {
             :icon="CirclePlus"
             @click="handleOpenDialog()"
           >
-            运输方式
+            添加运输方式
           </el-button>
           <el-button
             type="danger"
@@ -184,24 +187,24 @@ onMounted(() => {
           <el-table-column prop="countryCode" label="国家代码">
             <template #default="scoped">
               {{
-                enum5Data.enmuObject[scoped.row.countryCode]?.value ||
-                scoped.row.countryCode
+                enum5Data.enmuObject[scoped.row.countryCode]?.value
+                  || scoped.row.countryCode
               }}
             </template>
           </el-table-column>
           <el-table-column prop="awsTransportMode" label="头程运输方式">
             <template #default="scoped">
               {{
-                enum2Data.enmuObject[scoped.row.awsTransportMode]?.value ||
-                scoped.row.awsTransportMode
+                enum2Data.enmuObject[scoped.row.awsTransportMode]?.value
+                  || scoped.row.awsTransportMode
               }}
             </template>
           </el-table-column>
           <el-table-column prop="lastLegDeliveryMode" label="尾程运输方式">
             <template #default="scoped">
               {{
-                enum4Data.enmuObject[scoped.row.lastLegDeliveryMode]?.value ||
-                scoped.row.lastLegDeliveryMode
+                enum4Data.enmuObject[scoped.row.lastLegDeliveryMode]?.value
+                  || scoped.row.lastLegDeliveryMode
               }}
             </template>
           </el-table-column>
@@ -210,8 +213,8 @@ onMounted(() => {
           <el-table-column prop="serviceCode" label="运输服务">
             <template #default="scoped">
               {{
-                serviceMap.get(scoped.row.serviceCode)?.name ||
-                scoped.row.serviceCode
+                serviceMap.get(scoped.row.serviceCode)?.name
+                  || scoped.row.serviceCode
               }}
             </template>
           </el-table-column>
@@ -230,15 +233,17 @@ onMounted(() => {
                 type="primary"
                 text
                 @click="handleOpenDialog(scoped.row)"
-                >编辑</el-button
               >
+                编辑
+              </el-button>
               <el-button
                 style="margin: 0"
                 type="danger"
                 text
                 @click="handleDelete([scoped.row.id])"
-                >删除</el-button
               >
+                删除
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -259,7 +264,7 @@ onMounted(() => {
       :enum4-data="enum4Data"
       :enum5-data="enum5Data"
       :service-list="serviceList"
-      @dialogConfirm="() => paginationRef.refresh()"
+      @dialog-confirm="() => paginationRef.refresh()"
     />
   </div>
 </template>
