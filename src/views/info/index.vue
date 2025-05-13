@@ -260,16 +260,16 @@ const toggleEditMode = () => {
 const resetForm = () => {
   // 这里可以添加从服务器重新获取配置的逻辑
   Object.assign(configInfo, {
-    shipmentIdVerifyRegex: "^[A-Za-z0-9]{10,20}$",
+    shipmentIdVerifyRegex: "",
     awsAccessKey: "",
     awsSecretKey: "",
     awsRoleArn: "",
-    tmsRequestCertificate1: "Bearer your_token_here",
-    tmsRequestCertificate2: "Bearer your_token_here",
-    tmsShipmentSelectUrl: "https://api.example.com/tms/shipments/select",
-    tmsShipmentTraceUrl: "https://api.example.com/tms/shipments/trace",
-    tmsServiceInfoSelectUrl: "https://api.example.com/tms/service/info",
-    nextslsCallbackCertificate: "Bearer your_token_here",
+    tmsRequestCertificate1: "",
+    tmsRequestCertificate2: "",
+    tmsShipmentSelectUrl: "",
+    tmsShipmentTraceUrl: "",
+    tmsServiceInfoSelectUrl: "",
+    nextslsCallbackCertificate: "",
   });
 };
 
