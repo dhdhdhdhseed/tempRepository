@@ -1,3 +1,12 @@
+/*
+ * @Author: LYG liaoyanguo
+ * @Date: 2025-05-12 16:58:21
+ * @LastEditors: LYG liaoyanguo
+ * @LastEditTime: 2025-05-13 15:13:57
+ * @Email: liaoyanguo@foxmail.com
+ * @Description: 
+ * @FilePath: /tempRepository/src/api/manage/index.ts
+ */
 import type * as Console from './types/console'
 import { request } from '@/utils/service'
 
@@ -69,6 +78,21 @@ export function commoncodeNew(data: any) {
 export function commoncodeDel(data: any) {
   return request<any>({
     url: '/console/common-code/carrier/delete',
+    method: 'post',
+    data,
+  })
+}
+/** 承运商 */
+export function carrierDetail(data: any) {
+  return request<any>({
+    url: '/console/carrier/detail',
+    method: 'post',
+    data,
+  })
+}
+export function carrierUpdate(data: any) {
+  return request<any>({
+    url: '/console/carrier/update/carrier-code',
     method: 'post',
     data,
   })
