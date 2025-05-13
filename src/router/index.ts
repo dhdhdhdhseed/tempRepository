@@ -97,6 +97,22 @@ export const constantRoutes: RouteRecordRaw[] = [
   {
     path: '/',
     component: Layouts,
+    redirect: '/shipment-order',
+    children: [
+      {
+        path: 'shipment-order',
+        component: () => import('@/views/shipment-order/shipment-order.vue'),
+        name: 'transportation',
+        meta: {
+          title: '运单',
+          elIcon: 'SetUp',
+        },
+      },
+    ],
+  },
+  {
+    path: '/',
+    component: Layouts,
     redirect: '/commoncode',
     children: [
       {
