@@ -1,6 +1,7 @@
-import { type VNode, cloneVNode, createVNode, defineComponent, h, KeepAlive } from "vue"
-import { useRoute } from "vue-router"
-import { useTagsViewStore } from "@/store/modules/tags-view"
+import type { VNode } from 'vue'
+import { useTagsViewStore } from '@/store/modules/tags-view'
+import { cloneVNode, createVNode, defineComponent, h, KeepAlive } from 'vue'
+import { useRoute } from 'vue-router'
 
 interface CompConsumerProps {
   component: VNode
@@ -23,7 +24,9 @@ export const CompConsumer = defineComponent(
       // 获取传入的组件
       const component = props.component
       // 判断当前是否包含 name，如果不包含 name，那就直接处理掉 name
-      if (!route.name) return component
+      if (!route.name) {
+        return component
+      }
       // 获取当前组件的名称
       const compName = (component.type as any)?.name
       // 获取当前路由的名称
@@ -33,7 +36,8 @@ export const CompConsumer = defineComponent(
       if (compMap.has(routeName)) {
         // 如果存在，则直接使用该组件进行渲染
         Comp = compMap.get(routeName)!
-      } else {
+      }
+      else {
         // 如果不存在，则克隆传入的组件并创建一个新的组件，将其添加到 compMap 中
         const node = cloneVNode(component)
         if (compName && compName === routeName) {
@@ -44,7 +48,7 @@ export const CompConsumer = defineComponent(
           name: routeName,
           setup() {
             return () => node
-          }
+          },
         })
         compMap.set(routeName, Comp)
       }
@@ -52,16 +56,16 @@ export const CompConsumer = defineComponent(
       return createVNode(
         KeepAlive,
         {
-          include: tagsViewStore.cachedViews
+          include: tagsViewStore.cachedViews,
         },
         {
-          default: () => h(Comp)
-        }
+          default: () => h(Comp),
+        },
       )
     }
   },
   {
-    name: "CompConsumer",
-    props: ["component"]
-  }
+    name: 'CompConsumer',
+    props: ['component'],
+  },
 )

@@ -38,6 +38,15 @@ export const useUserStore = defineStore('user', () => {
     // 用刷新页面代替重新登录
     window.location.reload()
   }
+
+  /** 重置 Visited Views 和 Cached Views */
+  const _resetTagsView = () => {
+    if (!settingsStore.cacheTagsView) {
+      tagsViewStore.delAllVisitedViews()
+      tagsViewStore.delAllCachedViews()
+    }
+  }
+
   /** 登出 */
   const logout = () => {
     removeToken()
@@ -52,14 +61,6 @@ export const useUserStore = defineStore('user', () => {
     token.value = ''
     roles.value = []
   }
-  /** 重置 Visited Views 和 Cached Views */
-  const _resetTagsView = () => {
-    if (!settingsStore.cacheTagsView) {
-      tagsViewStore.delAllVisitedViews()
-      tagsViewStore.delAllCachedViews()
-    }
-  }
-
   return { token, roles, username, login, getInfo, changeRoles, logout, resetToken }
 })
 

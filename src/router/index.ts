@@ -2,6 +2,7 @@ import type { RouteRecordRaw } from 'vue-router'
 import routeSettings from '@/config/route'
 import { createRouter } from 'vue-router'
 import { flatMultiLevelRoutes, history } from './helper'
+
 const Layouts = () => import('@/layouts/index.vue')
 
 /**
@@ -55,7 +56,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         name: 'Dashboard',
         meta: {
           title: '首页',
-          svgIcon: 'dashboard',
+          elIcon: 'House',
           affix: true,
         },
       },
@@ -88,7 +89,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         name: 'transportation',
         meta: {
           title: '运输方式配置',
-          svgIcon: 'dashboard',
+          elIcon: 'SetUp',
         },
       },
     ],
@@ -99,14 +100,15 @@ export const constantRoutes: RouteRecordRaw[] = [
     redirect: '/commoncode',
     children: [
       {
-        path: "commoncode",
-        component: () => import("@/views/template-manage/commoncode.vue"),
-        name: "commoncode",
+        path: 'commoncode',
+        component: () => import('@/views/template-manage/commoncode.vue'),
+        name: 'commoncode',
         meta: {
-          title: "承运商公共代码管理",
-        }
+          title: '承运商公共代码管理',
+          elIcon: 'Files',
+        },
       },
-    ]
+    ],
   },
 ]
 
@@ -116,7 +118,7 @@ export const constantRoutes: RouteRecordRaw[] = [
  * 必须带有 Name 属性
  */
 export const dynamicRoutes: RouteRecordRaw[] = [
-  
+
 ]
 
 const router = createRouter({

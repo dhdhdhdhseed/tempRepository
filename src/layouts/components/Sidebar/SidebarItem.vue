@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { computed } from "vue"
-import { type RouteRecordRaw } from "vue-router"
-import SidebarItemLink from "./SidebarItemLink.vue"
-import { isExternal } from "@/utils/validate"
-import path from "path-browserify"
+import type { RouteRecordRaw } from 'vue-router'
+import { isExternal } from '@/utils/validate'
+import path from 'path-browserify'
+import { computed } from 'vue'
+import SidebarItemLink from './SidebarItemLink.vue'
 
 interface Props {
   item: RouteRecordRaw
@@ -11,7 +11,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  basePath: ""
+  basePath: '',
 })
 
 /** 是否始终显示根菜单 */
@@ -19,7 +19,7 @@ const alwaysShowRootMenu = computed(() => props.item.meta?.alwaysShow)
 
 /** 显示的子菜单 */
 const showingChildren = computed(() => {
-  return props.item.children?.filter((child) => !child.meta?.hidden) ?? []
+  return props.item.children?.filter(child => !child.meta?.hidden) ?? []
 })
 
 /** 显示的子菜单数量 */
@@ -36,12 +36,12 @@ const theOnlyOneChild = computed(() => {
     case number === 1:
       return showingChildren.value[0]
     default:
-      return { ...props.item, path: "" }
+      return { ...props.item, path: '' }
   }
 })
 
 /** 解析路径 */
-const resolvePath = (routePath: string) => {
+function resolvePath(routePath: string) {
   switch (true) {
     case isExternal(routePath):
       return routePath
@@ -58,7 +58,7 @@ const resolvePath = (routePath: string) => {
     <SidebarItemLink v-if="theOnlyOneChild.meta" :to="resolvePath(theOnlyOneChild.path)">
       <el-menu-item :index="resolvePath(theOnlyOneChild.path)">
         <SvgIcon v-if="theOnlyOneChild.meta.svgIcon" :name="theOnlyOneChild.meta.svgIcon" />
-        <component v-else-if="theOnlyOneChild.meta.elIcon" :is="theOnlyOneChild.meta.elIcon" class="el-icon" />
+        <component :is="theOnlyOneChild.meta.elIcon" v-else-if="theOnlyOneChild.meta.elIcon" class="el-icon" />
         <template v-if="theOnlyOneChild.meta.title" #title>
           {{ theOnlyOneChild.meta.title }}
         </template>
@@ -68,7 +68,7 @@ const resolvePath = (routePath: string) => {
   <el-sub-menu v-else :index="resolvePath(props.item.path)" teleported>
     <template #title>
       <SvgIcon v-if="props.item.meta?.svgIcon" :name="props.item.meta.svgIcon" />
-      <component v-else-if="props.item.meta?.elIcon" :is="props.item.meta.elIcon" class="el-icon" />
+      <component :is="props.item.meta.elIcon" v-else-if="props.item.meta?.elIcon" class="el-icon" />
       <span v-if="props.item.meta?.title">{{ props.item.meta.title }}</span>
     </template>
     <template v-if="props.item.children">

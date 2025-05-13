@@ -8,7 +8,8 @@ import { getToken } from './cache/cookies'
 /** 退出登录并强制刷新页面（会重定向到登录页） */
 function logout() {
   useUserStoreHook().logout()
-  location.reload()
+  // location.reload()
+  location.href = '/#/login'
 }
 
 /** 创建请求实例 */
@@ -41,7 +42,7 @@ function createService() {
       switch (code) {
         case '000000':
           return apiData
-        case '000007':
+        case '000011':
           // Token 过期时
           return logout()
         default:
