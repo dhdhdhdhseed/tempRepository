@@ -19,10 +19,16 @@ const { isLeft, isTop } = useLayoutMode()
   <div class="layout-logo-container" :class="{ 'collapse': props.collapse, 'layout-mode-top': isTop }">
     <transition name="layout-logo-fade">
       <router-link v-if="props.collapse" key="collapse" to="/dashboard">
-        <img :src="logo" class="layout-logo">
+        <!-- <img :src="logo" class="layout-logo"> -->
+        <div style="color: #fff;font-size: 16px;font-weight: 600;">
+          承运商
+        </div>
       </router-link>
       <router-link v-else key="expand" to="/dashboard">
-        <img :src="!isLeft ? logoText2 : logoText1" class="layout-logo-text">
+        <!-- <img :src="!isLeft ? logoText2 : logoText1" class="layout-logo-text"> -->
+        <div style="color: #fff;font-size: 20px;font-weight: 600;">
+          承运商后台管理
+        </div>
       </router-link>
     </transition>
   </div>

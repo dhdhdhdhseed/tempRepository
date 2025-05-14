@@ -19,7 +19,7 @@ import TransportationAddDialog from './components/TransportationAddDialog.vue'
 
 const loading = ref(false)
 
-const searchConfig = [
+const searchConfig: SearchConfigItem[] = [
   {
     type: 'input',
     label: '服务代码',
@@ -150,7 +150,7 @@ onMounted(() => {
   <div class="app-container">
     <el-card v-loading="loading" shadow="never" class="search-wrapper">
       <SearchBar
-        v-model="searchFrom"
+        :model-value="searchFrom"
         :search-config="searchConfig"
         @search="handleSearch"
         @reset="handleReset"

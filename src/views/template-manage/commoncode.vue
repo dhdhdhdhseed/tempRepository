@@ -28,12 +28,26 @@ onMounted(() => {
   })
 })
 
+const searchConfig: SearchConfigItem[] = [
+  {
+    type: 'input',
+    label: '类型',
+    prop: 'codeType',
+    placeholder: '请输入',
+  },
+]
+
+type SearchFrom = Record<(typeof searchConfig)[number]['prop'], string>
+const searchFrom = reactive<Partial<SearchFrom>>({
+  codeType: '0',
+})
+
 // #region table数据
-const tableData = ref<TableData[]>([])
+const tableData = ref<any[]>([])
 const total = ref<number>(0)
 const loading = ref<boolean>(false)
 // 获取table数据
-function getTableData(page: Page) {
+function getTableData(page: PagePar) {
   loading.value = true
   const params = {
     ...page,
@@ -53,60 +67,6 @@ function getTableData(page: Page) {
 }
 // #endregion
 
-// #region 基本数据
-function getBaseData() {
-  getFirstWarehouseSelect()
-  getLastWarehouseSelect()
-  getServiceList()
-}
-// 获取枚举数据
-interface EunmObj {
-  [key: string]: any
-}
-// 获取头程仓列表
-const firstWarehouseOption = ref<any[]>([])
-const firstWarehouseObj = reactive<EunmObj>({})
-async function getFirstWarehouseSelect() {
-  const params = {
-    location: 'CN',
-  }
-  const result = await warehouseSelect(params)
-  if (result.code === '000000') {
-    firstWarehouseOption.value = result.data
-    result.data.forEach((it: any) => {
-      firstWarehouseObj[it.id] = it
-    })
-  }
-}
-// 获取尾程仓列表
-const lastWarehouseOption = ref<any[]>([])
-const lastWarehouseMap = reactive<EunmObj>({})
-async function getLastWarehouseSelect() {
-  const params = {
-    location: 'US',
-  }
-  const result = await warehouseSelect(params)
-  if (result.code === '000000') {
-    lastWarehouseOption.value = result.data
-    result.data.forEach((it: any) => {
-      lastWarehouseMap[it.id] = it
-    })
-  }
-}
-// 获取运输服务列表
-const serviceOption = ref<any[]>([])
-const serviceObj = reactive<EunmObj>({})
-async function getServiceList() {
-  const result = await tmsServiceList({})
-  if (result.code === '000000') {
-    serviceOption.value = result.data
-    result.data.forEach((it: any) => {
-      serviceObj[it.code] = it
-    })
-  }
-}
-// #endregion
-
 // #region 运费模板
 const FORM_DATA = reactive({
   codeType: undefined,
@@ -114,7 +74,7 @@ const FORM_DATA = reactive({
   code: undefined,
 })
 const updateFormRef = ref()
-const updateDialogConfig = reactive<DialogConfig<any>>({
+const updateDialogConfig = reactive<any>({
   open: false,
   data: cloneDeep(FORM_DATA),
   title: '新增承运商代码',
@@ -162,7 +122,7 @@ async function onDelete(obj: any) {
       }
     }
     catch (err) {
-      console.log(err)
+      console.error(err)
       loading.value = false
     }
   })
@@ -173,20 +133,6 @@ function resetTemplateForm() {
   updateDialogConfig.data = cloneDeep(FORM_DATA)
   updateFormRef.value?.resetFields()
 }
-
-const searchConfig = [
-  {
-    type: 'input',
-    label: '类型',
-    prop: 'codeType',
-    placeholder: '请输入',
-  },
-] as const
-
-type SearchFrom = Record<(typeof searchConfig)[number]['prop'], string>
-const searchFrom = reactive<Partial<SearchFrom>>({
-  codeType: 0,
-})
 
 function handleSearch() {
   paginationRef.value.changePage(1)
@@ -202,7 +148,7 @@ function handleReset() {
   <div class="app-container">
     <el-card v-loading="loading" shadow="never" class="search-wrapper">
       <SearchBar
-        v-model="searchFrom"
+        :model-value="searchFrom"
         :search-config="searchConfig"
         @search="handleSearch"
         @reset="handleReset"

@@ -5,8 +5,10 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
-    "build-only": "vite build",
+    "build:test": "vue-tsc -b && && vite build --mode test",
+    "build-only:test": "vite build --mode test",
+    "build:prod": "vue-tsc -b && vite build --mode production",
+    "build-only:prod": "vite build --mode production",
     "preview": "vite preview"
   },
   "dependencies": {

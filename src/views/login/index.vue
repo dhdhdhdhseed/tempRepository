@@ -16,8 +16,8 @@ const loginFormRef = ref<FormInstance | null>(null)
 const loading = ref(false)
 /** 登录表单数据 */
 const loginFormData: LoginRequestData = reactive({
-  email: 'vicky@freedom-scm.com',
-  password: '123456',
+  email: '',
+  password: '',
 })
 /** 登录表单校验规则 */
 const loginFormRules: FormRules = {
@@ -56,7 +56,10 @@ function handleLogin() {
     <ThemeSwitch class="theme-switch" />
     <div class="login-card">
       <div class="title">
-        <img src="@/assets/layouts/logo-text-2.png">
+        <!-- <img src="@/assets/layouts/logo-text-2.png"> -->
+        <div style="font-size: 28px;font-weight: 600;color: #333333;">
+          承运商后台管理
+        </div>
       </div>
       <div class="content">
         <el-form ref="loginFormRef" :model="loginFormData" :rules="loginFormRules" @keyup.enter="handleLogin">
@@ -115,7 +118,7 @@ function handleLogin() {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 150px;
+      height: 100px;
       img {
         height: 100%;
       }

@@ -62,37 +62,7 @@ export const constantRoutes: RouteRecordRaw[] = [
       },
     ],
   },
-  // {
-  //   path: '/',
-  //   component: Layouts,
-  //   redirect: '/test',
-  //   children: [
-  //     {
-  //       path: 'test',
-  //       component: () => import('@/views/test/index.vue'),
-  //       name: 'Test',
-  //       meta: {
-  //         title: '测试页面',
-  //         svgIcon: 'dashboard',
-  //       },
-  //     },
-  //   ],
-  // },
-  {
-    path: '/',
-    component: Layouts,
-    children: [
-      {
-        path: 'info',
-        component: () => import('@/views/info/index.vue'),
-        name: 'info',
-        meta: {
-          title: '承运商信息',
-          elIcon: 'Edit',
-        },
-      },
-    ],
-  },
+
   {
     path: '/',
     component: Layouts,
@@ -102,7 +72,7 @@ export const constantRoutes: RouteRecordRaw[] = [
         component: () => import('@/views/transportation/transportation.vue'),
         name: 'transportation',
         meta: {
-          title: '运输方式配置',
+          title: '运输方式管理',
           elIcon: 'SetUp',
         },
       },
@@ -134,6 +104,21 @@ export const constantRoutes: RouteRecordRaw[] = [
         meta: {
           title: '承运商公共代码管理',
           elIcon: 'Files',
+        },
+      },
+    ],
+  },
+  {
+    path: '/',
+    component: Layouts,
+    children: [
+      {
+        path: 'info',
+        component: () => import('@/views/info/index.vue'),
+        name: 'info',
+        meta: {
+          title: '承运商信息',
+          elIcon: 'Edit',
         },
       },
     ],

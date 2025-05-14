@@ -1,24 +1,29 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
 import { Refresh, Search } from '@element-plus/icons-vue'
-import { defineProps, ref } from 'vue'
+import { computed, defineProps, ref } from 'vue'
 
 const _props = defineProps({
   // searchConfig: 表单配置数组，用于动态生成表单项
   searchConfig: {
-    type: Array as PropType<readonly SearchConfigItem[]>,
+    type: Array as PropType<SearchConfigItem[]>,
     required: true,
   },
   labelWidth: {
     type: String,
     default: '',
   },
+  modelValue: {
+    type: Object as PropType<{ [key: string]: any }>,
+    required: true,
+  },
 })
 // 定义组件的属性
-const emits = defineEmits(['search', 'reset'])
+const emits = defineEmits(['search', 'reset', 'update:modelValue'])
 const searchFormRef = ref()
-const searchFrom = defineModel<{ [key: string]: any }>({
-  required: true,
+const searchFrom = computed({
+  get: () => _props.modelValue,
+  set: value => emits('update:modelValue', value),
 })
 
 const defaultTime = ref<[Date, Date]>([
