@@ -1,15 +1,16 @@
 <script lang="ts" setup>
-import { defineExpose, reactive, ref, type PropType } from "vue";
+import type {
+  ConsoleTmsServiceInfoListDataItem,
+  ConsoleTransportationModeDataItem,
+} from '@/api/manage/types/console'
+import type { PropType } from 'vue'
 import {
   consoleTransportationModeNew,
   consoleTransportationModeUpdate,
-} from "@/api/manage";
-import { ElMessage } from "element-plus";
-import type {
-  ConsoleTransportationModeDataItem,
-  ConsoleTmsServiceInfoListDataItem,
-} from "@/api/manage/types/console";
-const emits = defineEmits(["dialogConfirm"]);
+} from '@/api/manage'
+import { ElMessage } from 'element-plus'
+import { defineExpose, reactive, ref } from 'vue'
+
 const props = defineProps({
   dialogData: {
     type: Object as PropType<ConsoleTransportationModeDataItem>,
@@ -35,73 +36,75 @@ const props = defineProps({
     type: Array as PropType<ConsoleTmsServiceInfoListDataItem[]>,
     required: true,
   },
-});
-const visible = ref(false);
-const loading = ref(false);
+})
+const emits = defineEmits(['dialogConfirm'])
+const visible = ref(false)
+const loading = ref(false)
 
-const ruleFormRef = ref();
+const ruleFormRef = ref()
 interface FormData {
-  serviceCode: string;
-  awsTransportMode: string;
-  serviceLevel: string;
-  lastLegDeliveryMode: string;
-  countryCode: string;
-  minTransitDays: string;
-  maxTransitDays: string;
-  id: string;
+  serviceCode: string
+  awsTransportMode: string
+  serviceLevel: string
+  lastLegDeliveryMode: string
+  countryCode: string
+  minTransitDays: string
+  maxTransitDays: string
+  id: string
 }
 const ruleForm = reactive<FormData>({
-  id: "",
-  serviceCode: "",
-  awsTransportMode: "",
-  serviceLevel: "",
-  lastLegDeliveryMode: "",
-  countryCode: "",
-  minTransitDays: "",
-  maxTransitDays: "",
-});
+  id: '',
+  serviceCode: '',
+  awsTransportMode: '',
+  serviceLevel: '',
+  lastLegDeliveryMode: '',
+  countryCode: '',
+  minTransitDays: '',
+  maxTransitDays: '',
+})
 const rules = {
-  serviceCode: { required: true, message: "请选择运输服务", trigger: "blur" },
+  serviceCode: { required: true, message: '请选择运输服务', trigger: 'blur' },
   awsTransportMode: {
     required: true,
-    message: "请选择头程运输方式",
-    trigger: "blur",
+    message: '请选择头程运输方式',
+    trigger: 'blur',
   },
   lastLegDeliveryMode: {
     required: true,
-    message: "请选择尾程运输方式",
-    trigger: "blur",
+    message: '请选择尾程运输方式',
+    trigger: 'blur',
   },
-  serviceLevel: { required: true, message: "请选择服务级别", trigger: "blur" },
-  countryCode: { required: true, message: "请选择国家", trigger: "blur" },
+  serviceLevel: { required: true, message: '请选择服务级别', trigger: 'blur' },
+  countryCode: { required: true, message: '请选择国家', trigger: 'blur' },
   minTransitDays: {
     required: true,
-    message: "请输入最小运输天数",
-    trigger: "blur",
+    message: '请输入最小运输天数',
+    trigger: 'blur',
   },
   maxTransitDays: {
     required: true,
-    message: "请输入最大运输天数",
-    trigger: "blur",
+    message: '请输入最大运输天数',
+    trigger: 'blur',
   },
-};
+}
 
 function onEnter() {
   if (props.dialogData?.id) {
     const mergedObj: Record<string, any> = Object.keys(ruleForm).reduce(
       (acc, key) => {
         if (props.dialogData && key in props.dialogData) {
-          acc[key] =
-            props.dialogData[key as keyof ConsoleTransportationModeDataItem] ??
-            ruleForm[key as keyof typeof ruleForm];
-        } else {
-          acc[key] = ruleForm[key as keyof typeof ruleForm];
+          acc[key]
+            = props.dialogData[key as keyof ConsoleTransportationModeDataItem]
+              ?? ruleForm[key as keyof typeof ruleForm]
         }
-        return acc;
+        else {
+          acc[key] = ruleForm[key as keyof typeof ruleForm]
+        }
+        return acc
       },
-      {} as Record<string, any>
-    );
-    Object.assign(ruleForm, mergedObj);
+      {} as Record<string, any>,
+    )
+    Object.assign(ruleForm, mergedObj)
   }
 }
 
@@ -110,33 +113,33 @@ function handleSubmit() {
     if (valid) {
       const api = ruleForm.id
         ? consoleTransportationModeUpdate
-        : consoleTransportationModeNew;
-      const result = await api(ruleForm);
-      if (result.code === "000000") {
-        ElMessage.success("操作成功");
-        visible.value = false;
-        emits("dialogConfirm");
+        : consoleTransportationModeNew
+      const result = await api(ruleForm)
+      if (result.code === '000000') {
+        ElMessage.success('操作成功')
+        visible.value = false
+        emits('dialogConfirm')
       }
     }
-  });
+  })
 }
 
 const showServiceList = ref<ConsoleTmsServiceInfoListDataItem[]>(props.serviceList)
-function filterService(query: string){
-    query = query.toLowerCase();
-    showServiceList.value = props.serviceList.filter(
-      (item: { code: string; name: string }) =>
-        item.code.toLowerCase().includes(query) ||
-        item.name.toLowerCase().includes(query)
-    );
+function filterService(query: string) {
+  query = query.toLowerCase()
+  showServiceList.value = props.serviceList.filter(
+    (item: { code: string, name: string }) =>
+      item.code.toLowerCase().includes(query)
+      || item.name.toLowerCase().includes(query),
+  )
 }
 function handleClose() {
-  ruleFormRef.value.resetFields();
+  ruleFormRef.value.resetFields()
 }
 
 defineExpose({
   visible,
-});
+})
 </script>
 
 <template>
@@ -172,7 +175,7 @@ defineExpose({
               :key="item.code"
               :label="item.name"
               :value="item.code"
-            ></el-option>
+            />
           </el-select>
         </el-form-item>
         <el-form-item prop="serviceLevel" label="服务级别">
@@ -240,7 +243,9 @@ defineExpose({
     </div>
     <template #footer>
       <div style="display: flex; justify-content: center">
-        <el-button @click="visible = false"> 取消 </el-button>
+        <el-button @click="visible = false">
+          取消
+        </el-button>
         <el-button type="primary" :loading="loading" @click="handleSubmit">
           提交
         </el-button>

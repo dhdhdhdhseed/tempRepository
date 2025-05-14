@@ -24,7 +24,7 @@ const loginFormRules: FormRules = {
   email: [{ required: true, message: '请输入邮箱', trigger: 'blur' }],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, max: 16, message: '长度在 8 到 16 个字符', trigger: 'blur' },
+    { min: 6, max: 32, message: '长度在 8 到 32 个字符', trigger: 'blur' },
   ],
 }
 /** 登录逻辑  */
@@ -58,7 +58,7 @@ function handleLogin() {
       <div class="title">
         <!-- <img src="@/assets/layouts/logo-text-2.png"> -->
         <div style="font-size: 28px;font-weight: 600;color: #333333;">
-          承运商后台管理
+          Shiptrack 管理控制台
         </div>
       </div>
       <div class="content">

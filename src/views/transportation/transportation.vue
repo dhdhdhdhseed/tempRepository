@@ -22,9 +22,15 @@ const loading = ref(false)
 const searchConfig: SearchConfigItem[] = [
   {
     type: 'input',
-    label: '服务代码',
+    label: '运输服务',
     prop: 'serviceCode',
     placeholder: '请输入',
+  },
+  {
+    type: 'select',
+    label: '服务级别',
+    prop: 'serviceLevel',
+    placeholder: '请选择',
   },
   {
     type: 'select',
@@ -50,7 +56,8 @@ const searchConfig: SearchConfigItem[] = [
 ] as const
 const enum2Data = useFetchEnum({ codeType: '2' }, () =>
   loadSearchOptions('awsTransportMode', enum2Data.enmuOptions, searchConfig))
-const enum3Data = useFetchEnum({ codeType: '3' })
+const enum3Data = useFetchEnum({ codeType: '3' }, () =>
+  loadSearchOptions('serviceLevel', enum3Data.enmuOptions, searchConfig))
 const enum4Data = useFetchEnum({ codeType: '4' }, () =>
   loadSearchOptions('lastLegDeliveryMode', enum4Data.enmuOptions, searchConfig))
 const enum5Data = useFetchEnum({ codeType: '5' }, () =>
@@ -183,8 +190,8 @@ onMounted(() => {
         >
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column prop="id" label="ID" />
-          <el-table-column prop="carrierCode" label="运送者代码" />
-          <el-table-column prop="countryCode" label="国家代码">
+          <el-table-column prop="carrierCode" label="承运商" />
+          <el-table-column prop="countryCode" label="国家">
             <template #default="scoped">
               {{
                 enum5Data.enmuObject[scoped.row.countryCode]?.value

@@ -21,13 +21,13 @@ const { isLeft, isTop } = useLayoutMode()
       <router-link v-if="props.collapse" key="collapse" to="/dashboard">
         <!-- <img :src="logo" class="layout-logo"> -->
         <div style="color: #fff;font-size: 16px;font-weight: 600;">
-          承运商
+          Shiptrack
         </div>
       </router-link>
       <router-link v-else key="expand" to="/dashboard">
         <!-- <img :src="!isLeft ? logoText2 : logoText1" class="layout-logo-text"> -->
         <div style="color: #fff;font-size: 20px;font-weight: 600;">
-          承运商后台管理
+          Shiptrack 管理控制台
         </div>
       </router-link>
     </transition>
