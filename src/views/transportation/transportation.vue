@@ -34,7 +34,7 @@ const searchConfig: SearchConfigItem[] = [
   },
   {
     type: 'select',
-    label: '国家代码',
+    label: '国家',
     prop: 'countryCode',
     placeholder: '请选择',
     options: [],
@@ -87,14 +87,14 @@ async function getTableData(page: PagePar) {
     loading.value = false
   }
 }
-const serviceMap = new Map()
+const serviceMap = ref<{ [key: string]: ConsoleTmsServiceInfoListDataItem }>({})
 const serviceList = ref<ConsoleTmsServiceInfoListDataItem[]>([])
 function getAllService() {
   consoleTmsServiceInfoList().then((res) => {
     if (res.code === '000000') {
       serviceList.value = res.data
       res.data.forEach((item: any) => {
-        serviceMap.set(item.code, item)
+        serviceMap.value[item.code] = item
       })
     }
   })
@@ -219,10 +219,7 @@ onMounted(() => {
           <el-table-column prop="maxTransitDays" label="最大运天数" />
           <el-table-column prop="serviceCode" label="运输服务">
             <template #default="scoped">
-              {{
-                serviceMap.get(scoped.row.serviceCode)?.name
-                  || scoped.row.serviceCode
-              }}
+              {{ serviceMap[scoped.row.serviceCode]?.name || scoped.row.serviceCode }}
             </template>
           </el-table-column>
           <el-table-column prop="serviceLevel" label="服务级别">

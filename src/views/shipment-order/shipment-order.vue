@@ -15,6 +15,16 @@ const searchConfig: SearchConfigItem[] = [
     prop: 'trackingId',
     placeholder: '请输入',
   },
+  {
+    type: 'select',
+    label: '只查询错误订单',
+    prop: 'queryError',
+    placeholder: '请选择',
+    options: [
+      { label: '是', value: true },
+      { label: '否', value: false },
+    ],
+  },
 ]
 const enum6Data = useFetchEnum({ codeType: '6' })
 
@@ -76,8 +86,8 @@ onMounted(() => {
           row-key="id"
           @selection-change="handleSelectionChange"
         >
-          <el-table-column prop="fbaShipmentId" label="亚马逊运单ID" />
           <el-table-column prop="trackingId" label="运单ID" />
+          <el-table-column prop="fbaShipmentId" label="亚马逊运单ID" />
 
           <el-table-column prop="idSyncStatus" label="运单号同步状态">
             <template #default="scope">
@@ -116,6 +126,7 @@ onMounted(() => {
               {{ enum6Data.enmuObject[scope.row.orderStatus]?.value }}
             </template>
           </el-table-column>
+          <el-table-column prop="errorCode" label="错误代码" />
         </el-table>
       </div>
       <div class="pager-wrapper">

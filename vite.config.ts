@@ -35,8 +35,8 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: path => path.replace(/^\/api/, ''),
         bypass: (req) => {
-          req.headers.origin = 'https://test-shiptrack-console.freedomscm.com/'
-          req.headers.referer = 'https://test-shiptrack-console.freedomscm.com/'
+          req.headers.origin = 'https://test-shiptrack.freedomscm.com/'
+          req.headers.referer = 'https://test-shiptrack.freedomscm.com/'
         },
       },
     },

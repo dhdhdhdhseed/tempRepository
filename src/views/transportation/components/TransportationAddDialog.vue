@@ -88,7 +88,37 @@ const rules = {
   },
 }
 
+function handleSubmit() {
+  ruleFormRef.value.validate(async (valid: boolean) => {
+    if (valid) {
+      const api = ruleForm.id
+        ? consoleTransportationModeUpdate
+        : consoleTransportationModeNew
+      const result = await api(ruleForm)
+      if (result.code === '000000') {
+        ElMessage.success('操作成功')
+        visible.value = false
+        emits('dialogConfirm')
+      }
+    }
+  })
+}
+
+const showServiceList = ref<ConsoleTmsServiceInfoListDataItem[]>([])
+function filterService(query: string) {
+  query = query.toLowerCase()
+  showServiceList.value = props.serviceList.filter(
+    (item: { code: string, name: string }) =>
+      item.code.toLowerCase().includes(query)
+      || item.name.toLowerCase().includes(query),
+  )
+}
+function handleClose() {
+  ruleFormRef.value.resetFields()
+}
+
 function onEnter() {
+  showServiceList.value = props.serviceList
   if (props.dialogData?.id) {
     const mergedObj: Record<string, any> = Object.keys(ruleForm).reduce(
       (acc, key) => {
@@ -106,35 +136,6 @@ function onEnter() {
     )
     Object.assign(ruleForm, mergedObj)
   }
-}
-
-function handleSubmit() {
-  ruleFormRef.value.validate(async (valid: boolean) => {
-    if (valid) {
-      const api = ruleForm.id
-        ? consoleTransportationModeUpdate
-        : consoleTransportationModeNew
-      const result = await api(ruleForm)
-      if (result.code === '000000') {
-        ElMessage.success('操作成功')
-        visible.value = false
-        emits('dialogConfirm')
-      }
-    }
-  })
-}
-
-const showServiceList = ref<ConsoleTmsServiceInfoListDataItem[]>(props.serviceList)
-function filterService(query: string) {
-  query = query.toLowerCase()
-  showServiceList.value = props.serviceList.filter(
-    (item: { code: string, name: string }) =>
-      item.code.toLowerCase().includes(query)
-      || item.name.toLowerCase().includes(query),
-  )
-}
-function handleClose() {
-  ruleFormRef.value.resetFields()
 }
 
 defineExpose({
