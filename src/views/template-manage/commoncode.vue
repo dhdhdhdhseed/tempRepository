@@ -5,41 +5,18 @@ import {
   commoncodeSelectPageable,
 } from '@/api/manage'
 import Pagination from '@/components/Pagination/Pagination.vue'
-import SearchBar from '@/components/SearchBar/index.vue'
 import { CirclePlus } from '@element-plus/icons-vue'
 
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { cloneDeep } from 'lodash-es'
 
 import { nextTick, onMounted, reactive, ref } from 'vue'
-// const enum28Data = useFetchEnum({ id: '3', })
-// const enum6Data = useFetchEnum({ id: '6', })
-
-// const agentTypeOptions = ref<any[]>([]);
-// const enum28Data = useFetchEnum({ id: "3" }, () => {
-//   agentTypeOptions.value = enum28Data.enmuOptions; //.filter((it) => it.value === 'A' || it.value === 'SA')
-// });
 
 const paginationRef = ref()
 onMounted(() => {
-  // getBaseData();
   nextTick(() => {
     paginationRef.value.changePage(1)
   })
-})
-
-const searchConfig: SearchConfigItem[] = [
-  {
-    type: 'input',
-    label: '类型',
-    prop: 'codeType',
-    placeholder: '请输入',
-  },
-]
-
-type SearchFrom = Record<(typeof searchConfig)[number]['prop'], string>
-const searchFrom = reactive<Partial<SearchFrom>>({
-  codeType: '0',
 })
 
 // #region table数据
@@ -51,7 +28,6 @@ function getTableData(page: PagePar) {
   loading.value = true
   const params = {
     ...page,
-    ...searchFrom,
   }
   commoncodeSelectPageable(params)
     .then(({ data }: any) => {
@@ -80,20 +56,15 @@ const updateDialogConfig = reactive<any>({
   title: '新增承运商代码',
 })
 async function openUpdateFreightDialog() {
-  // const result = await warehouseShippingCodeDetail({ id: row.id })
-  // updateDialogConfig.data = JSON.parse(JSON.stringify(row));
   updateDialogConfig.open = true
 }
 async function submitSave() {
   updateFormRef.value.validate(async (valid: boolean) => {
     if (valid) {
       const params = {
-        // "id": updateDialogConfig.data.id,
         codeType: updateDialogConfig.data.codeType,
         value: updateDialogConfig.data.value,
         code: updateDialogConfig.data.code,
-        // language: updateDialogConfig.data.language,
-        // orderValue: updateDialogConfig.data.orderValue,
       }
       const result = await commoncodeNew(params)
       if (result.code === '000000') {
@@ -134,26 +105,11 @@ function resetTemplateForm() {
   updateFormRef.value?.resetFields()
 }
 
-function handleSearch() {
-  paginationRef.value.changePage(1)
-}
-function handleReset() {
-  paginationRef.value.changePage(1)
-}
-
 // #endregion
 </script>
 
 <template>
   <div class="app-container">
-    <el-card v-loading="loading" shadow="never" class="search-wrapper">
-      <SearchBar
-        :model-value="searchFrom"
-        :search-config="searchConfig"
-        @search="handleSearch"
-        @reset="handleReset"
-      />
-    </el-card>
     <el-card v-loading="loading" shadow="never">
       <div class="toolbar-wrapper" style="margin-bottom: 10px">
         <div>
@@ -169,31 +125,9 @@ function handleReset() {
       <div class="table-wrapper">
         <el-table :data="tableData">
           <el-table-column type="selection" width="50" align="center" />
-          <!-- <el-table-column prop="id" label="ID" align="center" /> -->
-          <!-- <el-table-column prop="code" label="类型" align="center" /> -->
-          <!-- <el-table-column prop="code" label="商户类型" align="center">
-            <template #default="scope">
-              {{ enum28Data.enmuObject[scope.row.code]?.value }}
-            </template>
-          </el-table-column> -->
-          <!-- <el-table-column prop="language" label="语言" align="center" /> -->
           <el-table-column prop="codeType" label="类型" align="center" />
           <el-table-column prop="code" label="编码" align="center" />
           <el-table-column prop="value" label="对应值" align="center" />
-          <!-- <el-table-column label="排序" align="center">
-            <template #default="scope">
-              <span>{{ scope.row.orderValue }}</span>
-              <el-icon
-                class="theme_color"
-                style="cursor: pointer; margin-left: 5px"
-                @click="openUpdateFreightDialog(scope.row)"
-              >
-                <Edit />
-              </el-icon>
-            </template>
-          </el-table-column> -->
-          <!-- <el-table-column prop="createdTime" label="创建时间" align="center" />
-          <el-table-column prop="updatedTime" label="更新时间" align="center" /> -->
           <el-table-column label="操作" align="center">
             <template #default="scope">
               <div

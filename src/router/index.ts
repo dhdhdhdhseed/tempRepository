@@ -62,6 +62,21 @@ export const constantRoutes: RouteRecordRaw[] = [
       },
     ],
   },
+  {
+    path: '/',
+    component: Layouts,
+    children: [
+      {
+        path: 'info',
+        component: () => import('@/views/info/index.vue'),
+        name: 'info',
+        meta: {
+          title: '配置承运商',
+          elIcon: 'Setting',
+        },
+      },
+    ],
+  },
 
   {
     path: '/',
@@ -78,21 +93,7 @@ export const constantRoutes: RouteRecordRaw[] = [
       },
     ],
   },
-  {
-    path: '/',
-    component: Layouts,
-    children: [
-      {
-        path: 'shipment-order',
-        component: () => import('@/views/shipment-order/shipment-order.vue'),
-        name: 'shipment-order',
-        meta: {
-          title: '运单列表',
-          elIcon: 'Tickets',
-        },
-      },
-    ],
-  },
+
   {
     path: '/',
     component: Layouts,
@@ -113,12 +114,12 @@ export const constantRoutes: RouteRecordRaw[] = [
     component: Layouts,
     children: [
       {
-        path: 'info',
-        component: () => import('@/views/info/index.vue'),
-        name: 'info',
+        path: 'shipment-order',
+        component: () => import('@/views/shipment-order/shipment-order.vue'),
+        name: 'shipment-order',
         meta: {
-          title: '承运商信息',
-          elIcon: 'Edit',
+          title: '运单列表',
+          elIcon: 'Tickets',
         },
       },
     ],
