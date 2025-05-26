@@ -56,7 +56,6 @@ function handleLogin() {
     <ThemeSwitch class="theme-switch" />
     <div class="login-card">
       <div class="title">
-        <!-- <img src="@/assets/layouts/logo-text-2.png"> -->
         <div style="font-size: 28px;font-weight: 600;color: #333333;">
           Shiptrack 管理控制台
         </div>

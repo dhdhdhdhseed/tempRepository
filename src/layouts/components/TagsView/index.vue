@@ -2,7 +2,7 @@
 import type { TagView } from '@/store/modules/tags-view'
 import type { RouteLocationNormalizedLoaded, RouteRecordRaw } from 'vue-router'
 import { useRouteListener } from '@/hooks/useRouteListener'
-import { usePermissionStore } from '@/store/modules/permission'
+import constantRoutes from '@/router/constantRoutes'
 import { useTagsViewStore } from '@/store/modules/tags-view'
 import { Close } from '@element-plus/icons-vue'
 import path from 'path-browserify'
@@ -14,7 +14,6 @@ const instance = getCurrentInstance()
 const router = useRouter()
 const route = useRoute()
 const tagsViewStore = useTagsViewStore()
-const permissionStore = usePermissionStore()
 const { listenerRouteChange } = useRouteListener()
 
 /** 标签页组件元素的引用数组 */
@@ -64,7 +63,7 @@ function filterAffixTags(routes: RouteRecordRaw[], basePath = '/') {
 
 /** 初始化标签页 */
 function initTags() {
-  affixTags = filterAffixTags(permissionStore.routes)
+  affixTags = filterAffixTags(constantRoutes)
   for (const tag of affixTags) {
     // 必须含有 name 属性
     tag.name && tagsViewStore.addVisitedView(tag)
@@ -106,7 +105,9 @@ function closeOthersTags() {
 function closeAllTags(view: TagView) {
   tagsViewStore.delAllVisitedViews()
   tagsViewStore.delAllCachedViews()
-  if (affixTags.some(tag => tag.path === route.path)) { return }
+  if (affixTags.some(tag => tag.path === route.path)) {
+    return
+  }
   toLastView(tagsViewStore.visitedViews, view)
 }
 

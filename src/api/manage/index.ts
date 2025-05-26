@@ -58,6 +58,14 @@ export function commoncodeSelectType(data: any) {
     data,
   })
 }
+/** 承运商公共代码 */
+export function consoleCommonCodeCarrierSelectCodeType(data: any) {
+  return request<any>({
+    url: '/console/common-code/carrier/select/code-type',
+    method: 'post',
+    data,
+  })
+}
 /** 承运商公共代码分页列表 */
 export function commoncodeSelectPageable(data: any) {
   return request<any>({
@@ -102,6 +110,54 @@ export function carrierUpdate(data: any) {
 export function consoleShipmentOrderSelectPageable(data: Console.ConsoleShipmentOrderSelectPageablePar) {
   return request<ApiResponseData<Console.ConsoleShipmentOrderSelectPageableData>>({
     url: '/console/shipment-order/select/pageable',
+    method: 'post',
+    data,
+  })
+}
+
+// 路由配置列表
+export function consoleTrackingEventConfigList() {
+  return request<ApiResponseData<any>>({
+    url: '/console/tracking-event-config/list',
+    method: 'post',
+  })
+}
+// 路由配置新增
+export function consoleTrackingEventConfigNew(data: any) {
+  return request<ApiResponseData<any>>({
+    url: '/console/tracking-event-config/new',
+    method: 'post',
+    data,
+  })
+}
+// 路由配置修改
+export function consoleTrackingEventConfigUpdate(data: any) {
+  return request<ApiResponseData<any>>({
+    url: '/console/tracking-event-config/update',
+    method: 'post',
+    data,
+  })
+}
+// 路由配置删除
+export function consoleTrackingEventConfigDelete(data: any) {
+  return request<ApiResponseData<any>>({
+    url: '/console/tracking-event-config/delete',
+    method: 'post',
+    data,
+  })
+}
+// EDD配置分页
+export function consoleTrackingEventEddConfigSelectPageable(data: any) {
+  return request<ApiResponseData<any>>({
+    url: '/console/tracking-event-edd-config/select/pageable',
+    method: 'post',
+    data,
+  })
+}
+// EDD配置修改
+export function consoleTrackingEventEddConfigUpdate(data: any) {
+  return request<ApiResponseData<any>>({
+    url: '/console/tracking-event-edd-config/update',
     method: 'post',
     data,
   })

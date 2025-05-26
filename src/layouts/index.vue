@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { useDevice } from '@/hooks/useDevice'
 import { useLayoutMode } from '@/hooks/useLayoutMode'
-import { useWatermark } from '@/hooks/useWatermark'
 import { useSettingsStore } from '@/store/modules/settings'
 import { getCssVariableValue, setCssVariableValue } from '@/utils'
 import { storeToRefs } from 'pinia'
@@ -15,11 +14,10 @@ import TopMode from './TopMode.vue'
 /** Layout 布局响应式 */
 useResize()
 
-const { setWatermark, clearWatermark } = useWatermark()
 const { isMobile } = useDevice()
 const { isLeft, isTop, isLeftTop } = useLayoutMode()
 const settingsStore = useSettingsStore()
-const { showSettings, showTagsView, showWatermark, showGreyMode, showColorWeakness } = storeToRefs(settingsStore)
+const { showSettings, showTagsView, showGreyMode, showColorWeakness } = storeToRefs(settingsStore)
 
 const classes = computed(() => {
   return {
@@ -37,11 +35,6 @@ watchEffect(() => {
     : setCssVariableValue(cssVariableName, '0px')
 })
 // #endregion
-
-/** 开启或关闭系统水印 */
-watchEffect(() => {
-  showWatermark.value ? setWatermark(import.meta.env.VITE_APP_TITLE) : clearWatermark()
-})
 </script>
 
 <template>

@@ -1,130 +1,15 @@
 import type { RouteRecordRaw } from 'vue-router'
-import routeSettings from '@/config/route'
-import { createRouter } from 'vue-router'
-import { flatMultiLevelRoutes, history } from './helper'
-
-const Layouts = () => import('@/layouts/index.vue')
-
-/**
- * 常驻路由
- * 除了 redirect/403/404/login 等隐藏页面，其他页面建议设置 Name 属性
- */
-export const constantRoutes: RouteRecordRaw[] = [
-  {
-    path: '/redirect',
-    component: Layouts,
-    meta: {
-      hidden: true,
-    },
-    children: [
-      {
-        path: ':path(.*)',
-        component: () => import('@/views/redirect/index.vue'),
-      },
-    ],
-  },
-  {
-    path: '/403',
-    component: () => import('@/views/error-page/403.vue'),
-    meta: {
-      hidden: true,
-    },
-  },
-  {
-    path: '/404',
-    component: () => import('@/views/error-page/404.vue'),
-    meta: {
-      hidden: true,
-    },
-    alias: '/:pathMatch(.*)*',
-  },
-  {
-    path: '/login',
-    component: () => import('@/views/login/index.vue'),
-    meta: {
-      hidden: true, // 是否在菜单栏上隐藏
-    },
-  },
-  {
-    path: '/',
-    component: Layouts,
-    redirect: '/login',
-    children: [
-      {
-        path: 'dashboard',
-        component: () => import('@/views/dashboard/index.vue'),
-        name: 'Dashboard',
-        meta: {
-          title: '首页',
-          elIcon: 'House',
-          affix: true,
-        },
-      },
-    ],
-  },
-  {
-    path: '/',
-    component: Layouts,
-    children: [
-      {
-        path: 'info',
-        component: () => import('@/views/info/index.vue'),
-        name: 'info',
-        meta: {
-          title: '配置承运商',
-          elIcon: 'Setting',
-        },
-      },
-    ],
-  },
-
-  {
-    path: '/',
-    component: Layouts,
-    children: [
-      {
-        path: 'transportation',
-        component: () => import('@/views/transportation/transportation.vue'),
-        name: 'transportation',
-        meta: {
-          title: '运输方式管理',
-          elIcon: 'SetUp',
-        },
-      },
-    ],
-  },
-
-  {
-    path: '/',
-    component: Layouts,
-    children: [
-      {
-        path: 'commoncode',
-        component: () => import('@/views/template-manage/commoncode.vue'),
-        name: 'commoncode',
-        meta: {
-          title: '承运商公共代码管理',
-          elIcon: 'Files',
-        },
-      },
-    ],
-  },
-  {
-    path: '/',
-    component: Layouts,
-    children: [
-      {
-        path: 'shipment-order',
-        component: () => import('@/views/shipment-order/shipment-order.vue'),
-        name: 'shipment-order',
-        meta: {
-          title: '运单列表',
-          elIcon: 'Tickets',
-        },
-      },
-    ],
-  },
-]
+import { setRouteChange } from '@/hooks/useRouteListener'
+import { useTitle } from '@/hooks/useTitle'
+import { ElMessage } from 'element-plus'
+import NProgress from 'nprogress'
+import {
+  createRouter,
+  createWebHashHistory,
+  createWebHistory,
+} from 'vue-router'
+import constantRoutes from './constantRoutes'
+import 'nprogress/nprogress.css'
 
 /**
  * 动态路由
@@ -134,10 +19,57 @@ export const constantRoutes: RouteRecordRaw[] = [
 export const dynamicRoutes: RouteRecordRaw[] = [
 
 ]
+const { setTitle } = useTitle()
+NProgress.configure({ showSpinner: false })
 
 const router = createRouter({
-  history,
-  routes: routeSettings.thirdLevelRouteCache ? flatMultiLevelRoutes(constantRoutes) : constantRoutes,
+  history: import.meta.env.VITE_ROUTER_HISTORY === 'hash'
+    ? createWebHashHistory(import.meta.env.VITE_PUBLIC_PATH)
+    : createWebHistory(import.meta.env.VITE_PUBLIC_PATH),
+  routes: constantRoutes,
+})
+
+router.beforeEach(async (to, _from, next) => {
+  NProgress.start()
+  // const userStore = useUserStoreHook()
+  // const permissionStore = usePermissionStoreHook()
+  // const token = getToken()
+
+  // 如果没有登陆
+  // if (!token) {
+  //   // 如果在免登录的白名单中，则直接进入
+  //   if (isWhiteList(to)) {
+  //     return next()
+  //   }
+  //   // 其他没有访问权限的页面将被重定向到登录页面
+  //   return next('/login')
+  // }
+
+  // 如果已经登录，并准备进入 Login 页面，则重定向到主页
+  // if (to.path === '/login') {
+  //   return next({ path: '/' })
+  // }
+
+  // 如果用户已经获得其权限角色
+  // if (userStore.roles.length !== 0) {
+  //   return next()
+  // }
+
+  try {
+    next()
+  }
+  catch (err: any) {
+    // 过程中发生任何错误，都直接重置 Token，并重定向到登录页面
+    // userStore.resetToken()
+    ElMessage.error(err.message || '路由守卫过程发生错误')
+    next('/login')
+  }
+})
+
+router.afterEach((to) => {
+  setRouteChange(to)
+  setTitle(to.meta.title)
+  NProgress.done()
 })
 
 /** 重置路由 */

@@ -15,18 +15,12 @@ export interface LayoutSettings {
   fixedHeader: boolean
   /** 是否显示页脚 Footer */
   showFooter: boolean
-  /** 是否显示消息通知 */
-  showNotify: boolean
   /** 是否显示切换主题按钮 */
   showThemeSwitch: boolean
   /** 是否显示全屏按钮 */
   showScreenfull: boolean
-  /** 是否显示搜索按钮 */
-  showSearchMenu: boolean
   /** 是否缓存标签栏 */
   cacheTagsView: boolean
-  /** 开启系统水印 */
-  showWatermark: boolean
   /** 是否显示灰色模式 */
   showGreyMode: boolean
   /** 是否显示色弱模式 */
@@ -41,12 +35,9 @@ const defaultSettings: LayoutSettings = {
   fixedHeader: true,
   showFooter: false,
   showLogo: true,
-  showNotify: false,
   showThemeSwitch: true,
   showScreenfull: true,
-  showSearchMenu: false,
   cacheTagsView: false,
-  showWatermark: false,
   showGreyMode: false,
   showColorWeakness: false,
 }

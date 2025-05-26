@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { useDevice } from '@/hooks/useDevice'
 import { useLayoutMode } from '@/hooks/useLayoutMode'
+import constantRoutes from '@/router/constantRoutes'
 import { useAppStore } from '@/store/modules/app'
-import { usePermissionStore } from '@/store/modules/permission'
 import { useSettingsStore } from '@/store/modules/settings'
 import { getCssVariableValue } from '@/utils'
 import { computed } from 'vue'
@@ -18,7 +18,6 @@ const { isMobile } = useDevice()
 const { isLeft, isTop } = useLayoutMode()
 const route = useRoute()
 const appStore = useAppStore()
-const permissionStore = usePermissionStore()
 const settingsStore = useSettingsStore()
 
 const activeMenu = computed(() => {
@@ -28,7 +27,7 @@ const activeMenu = computed(() => {
   } = route
   return activeMenu || path
 })
-const noHiddenRoutes = computed(() => permissionStore.routes.filter(item => !item.meta?.hidden))
+const noHiddenRoutes = computed(() => constantRoutes.filter(item => !item.meta?.hidden))
 
 const isCollapse = computed(() => !appStore.sidebar.opened)
 const isLogo = computed(() => isLeft.value && settingsStore.showLogo)

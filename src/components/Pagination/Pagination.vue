@@ -1,15 +1,42 @@
 <script lang="ts" setup>
-import { defineExpose, reactive, ref } from 'vue'
+import type { PropType } from 'vue'
+import { defineExpose, ref } from 'vue'
 
-const props = defineProps(['total', 'style', 'sizes', 'pageSize'])
+// const props = defineProps(['total', 'style', 'sizes', 'pageSize'])
+const props = defineProps({
+  total: {
+    type: Number,
+    default: 0,
+  },
+  style: {
+    type: Object,
+    default: () => ({}),
+  },
+  sizes: {
+    type: Array as PropType<number[]>,
+    default: () => [10, 20, 30, 50],
+  },
+  pageSize: {
+    type: Number as PropType<number>,
+    default: 10,
+  },
+  propsConfig: {
+    type: Object,
+    default:()=>({
+      size:''
+    })
+  },
+})
 const emit = defineEmits(['pagination'])
 
 const pageNumber = ref<number>(1)
-const pageSize = ref<number>(props.pageSize || 10)
-const sizes = ref<number[]>(props.sizes || [10, 20, 30, 50])
+const pageSize = ref<number>(props.pageSize)
+const sizes = ref<number[]>(props.sizes)
 
 // 修改每页显示数量
 function changeSize(val: number) {
+  console.log('修改每页显示数量');
+  
   pageNumber.value = 1
   pageSize.value = val
   emit('pagination', { pageNumber: pageNumber.value, pageSize: pageSize.value })
@@ -44,8 +71,9 @@ defineExpose(exposeFunctions)
       layout="total, sizes, prev, pager, next, jumper"
       page-size="small"
       :total="total"
-      @page-size-change="changeSize"
+      @size-change="changeSize"
       @current-change="changePage"
+      :size="propsConfig.size"
     />
   </div>
 </template>
