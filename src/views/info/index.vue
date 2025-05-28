@@ -12,7 +12,7 @@ const configForm = ref(null)
 const isEditMode = ref(false)
 
 // 展开的折叠面板
-const activeCollapse = ref(['aws', 'tms', 'callback'])
+const activeCollapse = ref(['aws', 'tms', 'callback', 'matching'])
 
 const tempData = ref({})
 // 配置信息数据
@@ -27,6 +27,7 @@ const configInfo = reactive({
   tmsShipmentTraceUrl: 'https://api.example.com/tms/shipments/trace',
   tmsServiceInfoSelectUrl: 'https://api.example.com/tms/service/info',
   nextslsCallbackCertificate: 'Bearer your_token_here',
+  enableSimilarityMatching: 0,
 })
 
 // 表单验证规则 - 所有字段都要求必填
@@ -104,6 +105,7 @@ function resetForm() {
     tmsShipmentTraceUrl: '',
     tmsServiceInfoSelectUrl: '',
     nextslsCallbackCertificate: '',
+    enableSimilarityMatching: 0,
   })
 }
 
@@ -161,6 +163,7 @@ function setData(data) {
   configInfo.tmsShipmentTraceUrl = data.tmsShipmentTraceUrl
   configInfo.tmsServiceInfoSelectUrl = data.tmsServiceInfoSelectUrl
   configInfo.nextslsCallbackCertificate = data.nextslsCallbackCertificate
+  configInfo.enableSimilarityMatching = data.enableSimilarityMatching
 }
 
 // 组件挂载时获取配置数据
@@ -328,6 +331,21 @@ onMounted(() => {
                 placeholder="输入推送运单回调接口凭证（新智慧填写对应的token）"
                 type="textarea"
                 :rows="3"
+              />
+            </el-form-item>
+          </el-collapse-item>
+          <el-collapse-item name="matching" title="相似度匹配">
+            <el-form-item
+              label="开启相似度匹配"
+              prop="enableSimilarityMatching"
+            >
+              <el-switch
+                v-model="configInfo.enableSimilarityMatching"
+                :disabled="!isEditMode"
+                active-text="是"
+                inactive-text="否"
+                :active-value="1"
+                :inactive-value="0"
               />
             </el-form-item>
           </el-collapse-item>
