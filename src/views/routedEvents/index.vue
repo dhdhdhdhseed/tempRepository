@@ -41,45 +41,46 @@ async function getTableData() {
   }
 }
 
-const childrenTableLoading = ref<boolean>(false)
-const childrenPaginationRef = ref()
-const selectedRow = ref<any>({})
+const childrenPaginationRefs = ref<any>({})
 const childrenData = ref<any[]>([])
-const childrenTotal = ref<number>(0)
+function setRef(el: any, id: string) {
+  childrenPaginationRefs.value[id] = el
+}
 
-async function getTableChildren(page: any) {
-  childrenTableLoading.value = true
+async function getTableChildren(page: any, data?: any) {
+  const currentRow: any = tableData.value.find(
+    (item: any) => item.id === data?.parentId,
+  )
+  currentRow.childrenLoading = true
   try {
     const result = await consoleTrackingEventEddConfigSelectPageable({
       ...page,
-      id: selectedRow.value?.id,
+      id: data?.parentId,
     })
-    childrenTableLoading.value = false
+    currentRow.childrenLoading = false
     if (result.code === '000000') {
-      childrenData.value = result.data.list
-      childrenTotal.value = result.data.total
+      currentRow.children = result.data.list
+      currentRow.childrenTotal = result.data.total
+    }
+    else {
+      currentRow.children = []
+      currentRow.childrenTotal = 0
     }
   }
   catch (err) {
     console.error(err)
-    childrenTableLoading.value = false
+    currentRow.childrenLoading = false
+    currentRow.children = []
+    currentRow.childrenTotal = 0
   }
 }
 const expandedRowKeys = ref<any[]>([])
 function loadChildren(row: any, expandedRows: any[]) {
-  const index = expandedRows.findIndex((r: any) => r.id === row.id)
-  if (index !== -1) {
-    expandedRowKeys.value = [row.id]
-  }
-  else {
-    expandedRowKeys.value = expandedRowKeys.value.filter(
-      key => key !== row.id,
-    )
-  }
-
-  selectedRow.value = row
+  expandedRowKeys.value = expandedRows.map((r: any) => r.id)
   nextTick(() => {
-    childrenPaginationRef.value.changePage(1)
+    if (expandedRowKeys.value.includes(row.id)) {
+      childrenPaginationRefs.value[row.id]?.changePage(1)
+    }
   })
 }
 
@@ -168,13 +169,13 @@ onMounted(() => {
         >
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column type="expand">
-            <template #default>
+            <template #default="scope">
               <div
+                v-loading="scope.row.childrenLoading"
                 style="padding: 10px 10px 10px 100px; background-color: #f1f1f1"
               >
                 <el-table
-                  v-loading="childrenTableLoading"
-                  :data="childrenData"
+                  :data="scope.row.children"
                   border
                   size="small"
                   :span-method="(row:any) => objectSpanMethod(row, childrenData, ['awsTransportMode', 'delayDays'])"
@@ -184,8 +185,8 @@ onMounted(() => {
                     prop="countryCode"
                     align="center"
                   >
-                    <template #default="scope">
-                      {{ enum2Data.enmuObject[scope.row.countryCode]?.value }}
+                    <template #default="childScope">
+                      {{ enum2Data.enmuObject[childScope.row.countryCode]?.value }}
                     </template>
                   </el-table-column>
                   <el-table-column
@@ -193,9 +194,9 @@ onMounted(() => {
                     prop="awsTransportMode"
                     align="center"
                   >
-                    <template #default="scope">
+                    <template #default="childScope">
                       {{
-                        enum3Data.enmuObject[scope.row.awsTransportMode]?.value
+                        enum3Data.enmuObject[childScope.row.awsTransportMode]?.value
                       }}
                     </template>
                   </el-table-column>
@@ -206,12 +207,12 @@ onMounted(() => {
                     align="center"
                   />
                   <el-table-column label="操作">
-                    <template #default="scoped">
+                    <template #default="childScope">
                       <el-button
                         style="margin: 0"
                         type="primary"
                         text
-                        @click="handleChildrenDialog(scoped.row)"
+                        @click="handleChildrenDialog(childScope.row)"
                       >
                         编辑
                       </el-button>
@@ -220,8 +221,9 @@ onMounted(() => {
                 </el-table>
                 <div class="pager-wrapper" style="justify-content: center">
                   <Pagination
-                    ref="childrenPaginationRef"
-                    :total="Number(childrenTotal)"
+                    :ref="(el) => setRef(el, scope.row.id)"
+                    :total="Number(scope.row.childrenTotal)"
+                    :data="{ parentId: scope.row.id }"
                     :props-config="{ size: 'small' }"
                     @pagination="getTableChildren"
                   />
@@ -234,12 +236,12 @@ onMounted(() => {
           <el-table-column prop="includeKeyWord" label="精确匹配正则表达式" />
           <el-table-column prop="excludeKeyWord" label="相似度匹配排除关键字" />
           <el-table-column label="操作">
-            <template #default="scoped">
+            <template #default="scope">
               <el-button
                 style="margin: 0"
                 type="primary"
                 text
-                @click="handleOpenDialog(scoped.row)"
+                @click="handleOpenDialog(scope.row)"
               >
                 编辑
               </el-button>
@@ -247,7 +249,7 @@ onMounted(() => {
                 style="margin: 0"
                 type="danger"
                 text
-                @click="handleDelete([scoped.row.id])"
+                @click="handleDelete([scope.row.id])"
               >
                 删除
               </el-button>
@@ -268,7 +270,7 @@ onMounted(() => {
       :enum2-data="enum2Data"
       :enum3-data="enum3Data"
       :dialog-data="childrenEditDialogData!"
-      @dialog-confirm="() => childrenPaginationRef.refresh()"
+      @dialog-confirm="() => childrenPaginationRefs[childrenEditDialogData!.trackingEventId].refresh()"
     />
   </div>
 </template>

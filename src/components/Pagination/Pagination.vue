@@ -22,9 +22,14 @@ const props = defineProps({
   },
   propsConfig: {
     type: Object,
-    default:()=>({
-      size:''
-    })
+    default: () => ({
+      size: '',
+    }),
+  },
+  // 额外数据,随分页事件一起返回
+  data: {
+    type: Object,
+    default: () => ({}),
   },
 })
 const emit = defineEmits(['pagination'])
@@ -35,19 +40,17 @@ const sizes = ref<number[]>(props.sizes)
 
 // 修改每页显示数量
 function changeSize(val: number) {
-  console.log('修改每页显示数量');
-  
   pageNumber.value = 1
   pageSize.value = val
-  emit('pagination', { pageNumber: pageNumber.value, pageSize: pageSize.value })
+  emit('pagination', { pageNumber: pageNumber.value, pageSize: pageSize.value }, { ...props.data })
 }
 // 页码切换
 function changePage(val: number) {
   pageNumber.value = val
-  emit('pagination', { pageNumber: pageNumber.value, pageSize: pageSize.value })
+  emit('pagination', { pageNumber: pageNumber.value, pageSize: pageSize.value }, { ...props.data })
 }
 function refresh() {
-  emit('pagination', { pageNumber: pageNumber.value, pageSize: pageSize.value })
+  emit('pagination', { pageNumber: pageNumber.value, pageSize: pageSize.value }, { ...props.data })
 }
 
 // 暴露给父组件的方法和变量
@@ -71,9 +74,9 @@ defineExpose(exposeFunctions)
       layout="total, sizes, prev, pager, next, jumper"
       page-size="small"
       :total="total"
+      :size="propsConfig.size"
       @size-change="changeSize"
       @current-change="changePage"
-      :size="propsConfig.size"
     />
   </div>
 </template>
