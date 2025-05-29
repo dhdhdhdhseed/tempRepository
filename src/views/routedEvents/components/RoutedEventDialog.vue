@@ -66,7 +66,7 @@ const rules = {
   eventName: { required: true, message: '请输入事件名称', trigger: 'blur' },
   includeKeyWord: {
     required: true,
-    message: '请输入包含关键字',
+    message: '请输入精确匹配正则表达式',
     trigger: 'blur',
   },
   trackingEventEddConfigs: { required: true, validator: validateEddConfigs },
@@ -173,7 +173,7 @@ defineExpose({
         :inline="false"
         :model="ruleForm"
         :rules="rules"
-        label-width="10em"
+        label-width="12em"
         size="small"
       >
         <el-form-item prop="eventName" label="事件名称">
@@ -183,11 +183,11 @@ defineExpose({
             :disabled="ruleForm.id?.length"
           />
         </el-form-item>
-        <el-form-item prop="includeKeyWord" label="包含关键字">
-          <el-input v-model="ruleForm.includeKeyWord" placeholder="请输入包含关键字,多个关键字请用'|'符号分割" />
+        <el-form-item prop="includeKeyWord" label="精确匹配正则表达式">
+          <el-input v-model="ruleForm.includeKeyWord" placeholder="请输入精确匹配正则表达式" />
         </el-form-item>
-        <el-form-item prop="excludeKeyWord" label="排除关键字">
-          <el-input v-model="ruleForm.excludeKeyWord" placeholder="请输入排除关键字,多个关键字请用'|'符号分割" />
+        <el-form-item prop="excludeKeyWord" label="相似度匹配排除关键字">
+          <el-input v-model="ruleForm.excludeKeyWord" placeholder="请输入相似度匹配排除关键字,多个关键字请用'|'符号分割" />
         </el-form-item>
         <el-form-item
           v-if="!ruleForm.id"

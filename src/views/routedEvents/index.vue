@@ -231,8 +231,8 @@ onMounted(() => {
           </el-table-column>
           <el-table-column prop="id" label="ID" />
           <el-table-column prop="eventName" label="事件名称" />
-          <el-table-column prop="includeKeyWord" label="包含关键字" />
-          <el-table-column prop="excludeKeyWord" label="排除关键字" />
+          <el-table-column prop="includeKeyWord" label="精确匹配正则表达式" />
+          <el-table-column prop="excludeKeyWord" label="相似度匹配排除关键字" />
           <el-table-column label="操作">
             <template #default="scoped">
               <el-button
