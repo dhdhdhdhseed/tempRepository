@@ -162,3 +162,11 @@ export function consoleTrackingEventEddConfigUpdate(data: any) {
     data,
   })
 }
+// 运单修改更新
+export function consoleShipmentOrderUpdate(data: any) {
+  return request<ApiResponseData<any>>({
+    url: '/console/shipment-order/update',
+    method: 'post',
+    data,
+  })
+}

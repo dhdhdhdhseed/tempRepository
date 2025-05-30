@@ -21,10 +21,11 @@ const loading = ref(false)
 
 const searchConfig: SearchConfigItem[] = [
   {
-    type: 'input',
+    type: 'select',
     label: '运输服务',
     prop: 'serviceCode',
-    placeholder: '请输入',
+    placeholder: '请选择',
+    options: [],
   },
   {
     type: 'select',
@@ -87,7 +88,9 @@ async function getTableData(page: PagePar) {
     loading.value = false
   }
 }
-const serviceMap = ref<{ [key: string]: ConsoleTmsServiceInfoListDataItem }>({})
+const serviceMap = ref<{ [key: string]: ConsoleTmsServiceInfoListDataItem }>(
+  {},
+)
 const serviceList = ref<ConsoleTmsServiceInfoListDataItem[]>([])
 function getAllService() {
   consoleTmsServiceInfoList().then((res) => {
@@ -96,6 +99,7 @@ function getAllService() {
       res.data.forEach((item: any) => {
         serviceMap.value[item.code] = item
       })
+      loadSearchOptions('serviceCode', res.data.map(it => ({ label: it.name, value: it.code })), searchConfig)
     }
   })
 }
@@ -219,7 +223,10 @@ onMounted(() => {
           <el-table-column prop="maxTransitDays" label="最大运天数" />
           <el-table-column prop="serviceCode" label="运输服务">
             <template #default="scoped">
-              {{ serviceMap[scoped.row.serviceCode]?.name || scoped.row.serviceCode }}
+              {{
+                serviceMap[scoped.row.serviceCode]?.name
+                  || scoped.row.serviceCode
+              }}
             </template>
           </el-table-column>
           <el-table-column prop="serviceLevel" label="服务级别">

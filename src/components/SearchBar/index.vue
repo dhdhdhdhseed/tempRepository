@@ -51,11 +51,13 @@ function handleReset() {
             <el-input
               v-if="item.type === 'input'" v-model="searchFrom[item.prop]" :placeholder="item.placeholder || '请输入'"
               clearable
+              @clear="() => { searchFrom[item.prop] = undefined }"
             />
             <!-- 选择栏 -->
             <el-select
               v-else-if="item.type === 'select'" v-model="searchFrom[item.prop]"
-              :placeholder="item.placeholder || '请选择'" clearable
+              :placeholder="item.placeholder || '请选择'" clearable filterable
+              @clear="() => { searchFrom[item.prop] = undefined }"
             >
               <el-option
                 v-for="option in item.options" :key="option.value" :label="option.label"

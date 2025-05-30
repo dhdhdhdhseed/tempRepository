@@ -1,6 +1,9 @@
 <script lang="ts" setup>
 import type { ShipmentOrderItem } from '@/api/manage/types/console'
-import { consoleShipmentOrderSelectPageable } from '@/api/manage/index'
+import {
+  consoleShipmentOrderSelectPageable,
+  consoleShipmentOrderUpdate,
+} from '@/api/manage/index'
 import Pagination from '@/components/Pagination/Pagination.vue'
 import SearchBar from '@/components/SearchBar/index.vue'
 import { useFetchEnum } from '@/hooks/userFetchEnum'
@@ -62,6 +65,42 @@ function handleSearch() {
 }
 function handleReset() {
   paginationRef.value.changePage(1)
+}
+
+const orderUpdateFormRef = ref()
+const orderUpdateForm = reactive({
+  id: '',
+  idSyncStatus: 0,
+  ldTransportationInfoFirstSyncStatus: 0,
+  ldTransportationInfoLastSyncStatus: 0,
+  completionStatus: 0,
+})
+const orderUpdateDialogVisible = ref(false)
+function onUpdate(row: any) {
+  Object.assign(orderUpdateForm, row)
+  orderUpdateDialogVisible.value = true
+}
+
+function resetOrderUpdateForm() {
+  if (orderUpdateFormRef.value) {
+    orderUpdateFormRef.value.resetFields()
+  }
+}
+
+function handleSubmitUpdate() {
+  consoleShipmentOrderUpdate({
+    id: orderUpdateForm.id,
+    idSyncStatus: orderUpdateForm.idSyncStatus,
+    ldTransportationInfoLastSyncStatus:
+      orderUpdateForm.ldTransportationInfoLastSyncStatus,
+    ldTransportationInfoFirstSyncStatus:
+      orderUpdateForm.ldTransportationInfoFirstSyncStatus,
+    completionStatus: orderUpdateForm.completionStatus,
+  }).then(() => {
+    resetOrderUpdateForm()
+    orderUpdateDialogVisible.value = false
+    paginationRef.value.refresh()
+  })
 }
 
 onMounted(() => {
@@ -127,6 +166,13 @@ onMounted(() => {
             </template>
           </el-table-column>
           <el-table-column prop="errorCode" label="错误代码" />
+          <el-table-column label="操作" width="150">
+            <template #default="scope">
+              <el-button type="primary" text @click="onUpdate(scope.row)">
+                更新运单状态
+              </el-button>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
       <div class="pager-wrapper">
@@ -137,6 +183,69 @@ onMounted(() => {
         />
       </div>
     </el-card>
+    <el-dialog
+      v-model="orderUpdateDialogVisible"
+      title="更新运单状态"
+      width="400px"
+      @closed="resetOrderUpdateForm"
+    >
+      <el-form
+        ref="orderUpdateFormRef"
+        :model="orderUpdateForm"
+        label-width="15em"
+      >
+        <el-form-item label="运单号同步状态">
+          <el-switch
+            v-model="orderUpdateForm.idSyncStatus"
+            inline-prompt
+            active-text="是"
+            inactive-text="否"
+            :active-value="1"
+            :inactive-value="0"
+          />
+        </el-form-item>
+        <el-form-item label="物货件首次更新状态流商">
+          <el-switch
+            v-model="orderUpdateForm.ldTransportationInfoFirstSyncStatus"
+            inline-prompt
+            active-text="是"
+            inactive-text="否"
+            :active-value="1"
+            :inactive-value="0"
+          />
+        </el-form-item>
+        <el-form-item label="货件最后一次更新状态">
+          <el-switch
+            v-model="orderUpdateForm.ldTransportationInfoLastSyncStatus"
+            inline-prompt
+            active-text="是"
+            inactive-text="否"
+            :active-value="1"
+            :inactive-value="0"
+          />
+        </el-form-item>
+        <el-form-item label="运单同步状态">
+          <el-switch
+            v-model="orderUpdateForm.completionStatus"
+            :active-value="1"
+            inline-prompt
+            active-text="完成"
+            inactive-text="未完成"
+            :inactive-value="0"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="orderUpdateDialogVisible = false">
+            取 消
+          </el-button>
+          <el-button type="primary" @click="handleSubmitUpdate">
+            确 定
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
