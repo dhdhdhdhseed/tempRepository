@@ -128,9 +128,9 @@ onMounted(() => {
           <el-table-column prop="trackingId" label="运单ID" />
           <el-table-column prop="fbaShipmentId" label="亚马逊运单ID" />
 
-          <el-table-column prop="idSyncStatus" label="运单号同步状态">
+          <el-table-column prop="idSyncStatus" label="运单号映射状态">
             <template #default="scope">
-              {{ scope.row.idSyncStatus === 0 ? "否" : "是" }}
+              {{ scope.row.idSyncStatus === 0 ? "未完成" : scope.row.idSyncStatus === 1 ? "完成" : '异常' }}
             </template>
           </el-table-column>
           <el-table-column
@@ -140,8 +140,8 @@ onMounted(() => {
             <template #default="scope">
               {{
                 scope.row.ldTransportationInfoFirstSyncStatus === 0
-                  ? "否"
-                  : "是"
+                  ? "未完成"
+                  : scope.row.ldTransportationInfoFirstSyncStatus === 1 ? "完成" : '异常'
               }}
             </template>
           </el-table-column>
@@ -151,13 +151,13 @@ onMounted(() => {
           >
             <template #default="scope">
               {{
-                scope.row.ldTransportationInfoLastSyncStatus === 0 ? "否" : "是"
+                scope.row.ldTransportationInfoLastSyncStatus === 0 ? "未完成" : scope.row.ldTransportationInfoLastSyncStatus === 1 ? "完成" : '异常'
               }}
             </template>
           </el-table-column>
           <el-table-column prop="completionStatus" label="运单同步状态">
             <template #default="scope">
-              {{ scope.row.completionStatus === 0 ? "未完成" : "完成" }}
+              {{ scope.row.completionStatus === 1 ? "完成" : "未完成" }}
             </template>
           </el-table-column>
           <el-table-column prop="orderStatus" label="运单状态">
@@ -198,8 +198,8 @@ onMounted(() => {
           <el-switch
             v-model="orderUpdateForm.idSyncStatus"
             inline-prompt
-            active-text="是"
-            inactive-text="否"
+            active-text="完成"
+            inactive-text="未完成"
             :active-value="1"
             :inactive-value="0"
           />
@@ -208,8 +208,8 @@ onMounted(() => {
           <el-switch
             v-model="orderUpdateForm.ldTransportationInfoFirstSyncStatus"
             inline-prompt
-            active-text="是"
-            inactive-text="否"
+            active-text="完成"
+            inactive-text="未完成"
             :active-value="1"
             :inactive-value="0"
           />
@@ -218,8 +218,8 @@ onMounted(() => {
           <el-switch
             v-model="orderUpdateForm.ldTransportationInfoLastSyncStatus"
             inline-prompt
-            active-text="是"
-            inactive-text="否"
+            active-text="完成"
+            inactive-text="未完成"
             :active-value="1"
             :inactive-value="0"
           />
