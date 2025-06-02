@@ -87,6 +87,21 @@ const constantRoutes: RouteRecordRaw[] = [
       },
     ],
   },
+  {
+    path: '/',
+    component: Layouts,
+    children: [
+      {
+        path: 'routed-events',
+        component: () => import('@/views/routedEvents/index.vue'),
+        name: 'routed-events',
+        meta: {
+          title: '路由事件配置',
+          elIcon: 'Tickets',
+        },
+      },
+    ],
+  },
 
   {
     path: '/',
@@ -113,21 +128,6 @@ const constantRoutes: RouteRecordRaw[] = [
         name: 'shipment-order',
         meta: {
           title: '运单列表',
-          elIcon: 'Tickets',
-        },
-      },
-    ],
-  },
-  {
-    path: '/',
-    component: Layouts,
-    children: [
-      {
-        path: 'routed-events',
-        component: () => import('@/views/routedEvents/index.vue'),
-        name: 'routed-events',
-        meta: {
-          title: '路由事件配置',
           elIcon: 'Tickets',
         },
       },
