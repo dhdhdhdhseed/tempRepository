@@ -193,9 +193,7 @@ onMounted(() => {
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column prop="id" label="ID" />
-          <el-table-column prop="carrierCode" label="承运商" />
-          <el-table-column prop="countryCode" label="国家">
+          <el-table-column prop="countryCode" label="国家" width="120">
             <template #default="scoped">
               {{
                 enum5Data.enmuObject[scoped.row.countryCode]?.value
@@ -203,7 +201,7 @@ onMounted(() => {
               }}
             </template>
           </el-table-column>
-          <el-table-column prop="awsTransportMode" label="头程运输方式">
+          <el-table-column prop="awsTransportMode" label="头程运输方式" width="150">
             <template #default="scoped">
               {{
                 enum2Data.enmuObject[scoped.row.awsTransportMode]?.value
@@ -211,7 +209,7 @@ onMounted(() => {
               }}
             </template>
           </el-table-column>
-          <el-table-column prop="lastLegDeliveryMode" label="尾程运输方式">
+          <el-table-column prop="lastLegDeliveryMode" label="尾程运输方式" min-width="200">
             <template #default="scoped">
               {{
                 enum4Data.enmuObject[scoped.row.lastLegDeliveryMode]?.value
@@ -219,9 +217,9 @@ onMounted(() => {
               }}
             </template>
           </el-table-column>
-          <el-table-column prop="minTransitDays" label="最小运天数" />
-          <el-table-column prop="maxTransitDays" label="最大运天数" />
-          <el-table-column prop="serviceCode" label="运输服务">
+          <el-table-column prop="minTransitDays" label="最小运天数" width="120" />
+          <el-table-column prop="maxTransitDays" label="最大运天数" width="120" />
+          <el-table-column prop="serviceCode" label="运输服务" min-width="200">
             <template #default="scoped">
               {{
                 serviceMap[scoped.row.serviceCode]?.name
@@ -229,7 +227,7 @@ onMounted(() => {
               }}
             </template>
           </el-table-column>
-          <el-table-column prop="serviceLevel" label="服务级别">
+          <el-table-column prop="serviceLevel" label="服务级别" min-width="200">
             <template #default="scoped">
               {{
                 enum3Data.enmuObject[scoped.row.serviceLevel.toUpperCase()]
@@ -237,7 +235,7 @@ onMounted(() => {
               }}
             </template>
           </el-table-column>
-          <el-table-column label="操作">
+          <el-table-column label="操作" width="200">
             <template #default="scoped">
               <el-button
                 style="margin: 0"

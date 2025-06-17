@@ -231,11 +231,10 @@ onMounted(() => {
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="id" label="ID" />
-          <el-table-column prop="eventName" label="事件名称" />
+          <el-table-column prop="eventName" label="事件名称" width="200" />
           <el-table-column prop="includeKeyWord" label="精确匹配正则表达式" />
           <el-table-column prop="excludeKeyWord" label="相似度匹配排除关键字" />
-          <el-table-column label="操作">
+          <el-table-column label="操作" width="200">
             <template #default="scope">
               <el-button
                 style="margin: 0"
