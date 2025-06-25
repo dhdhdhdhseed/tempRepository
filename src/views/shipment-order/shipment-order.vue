@@ -204,7 +204,7 @@ onMounted(() => {
             :inactive-value="0"
           />
         </el-form-item>
-        <el-form-item label="物货件首次更新状态流商">
+        <el-form-item label="货件首次更新状态">
           <el-switch
             v-model="orderUpdateForm.ldTransportationInfoFirstSyncStatus"
             inline-prompt
